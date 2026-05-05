@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Currency Converter — QuikConvert</title>
+  <meta name="description" content="Convert currencies with real-time exchange rates. Supports USD, INR, EUR, GBP and 150+ currencies worldwide. Free, fast and accurate.">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="logo">⚡ QuikConvert</a>
+    <ul class="nav-links">
+      <li><a href="index.html"      class="nav-link">Home</a></li>
+      <li><a href="calculator.html" class="nav-link">Calculator</a></li>
+      <li><a href="converter.html"  class="nav-link">Converter</a></li>
+      <li><a href="currency.html"   class="nav-link">Currency</a></li>
+      <li><a href="age.html"        class="nav-link">Age</a></li>
+      <li><a href="qr.html"         class="nav-link">QR</a></li>
+      <li><a href="sip.html"        class="nav-link">SIP</a></li>
+      <li><a href="document.html"   class="nav-link">Docs</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger">☰</button>
+  </div>
+  <div class="mobile-menu" id="nav-menu">
+    <a href="index.html"      class="nav-link">Home</a>
+    <a href="calculator.html" class="nav-link">Calculator</a>
+    <a href="converter.html"  class="nav-link">Converter</a>
+    <a href="currency.html"   class="nav-link">Currency</a>
+    <a href="age.html"        class="nav-link">Age</a>
+    <a href="qr.html"         class="nav-link">QR</a>
+    <a href="sip.html"        class="nav-link">SIP</a>
+    <a href="document.html"   class="nav-link">Docs</a>
+  </div>
+</nav>
+
+<div class="page-sm">
+  <h1 class="page-title">Currency Converter</h1>
+  <p class="page-sub">Live exchange rates via ExchangeRate-API</p>
+
+  <div class="card glow">
+    <label for="currency-amount">Amount</label>
+    <input type="number" id="currency-amount" value="1" min="0"
+           placeholder="Enter amount" style="margin-bottom:20px;" />
+
+    <div class="from-to" style="margin-bottom:22px;">
+      <div>
+        <label for="currency-from">From</label>
+        <select id="currency-from"></select>
+      </div>
+      <div style="padding-top:22px;">
+        <button class="btn btn-ghost btn-icon" id="currency-swap" title="Swap currencies">⇄</button>
+      </div>
+      <div>
+        <label for="currency-to">To</label>
+        <select id="currency-to"></select>
+      </div>
+    </div>
+
+    <p class="error" id="currency-error"></p>
+    <button class="btn btn-gold" id="currency-btn">Convert</button>
+
+    <div class="result-box" id="currency-result-box" style="display:none;margin-top:20px;">
+      <div id="currency-result"></div>
+    </div>
+  </div>
+
+  <p class="footer-note">Rates provided by ExchangeRate-API · May be delayed up to 24 hours</p>
+</div>
+
+<!-- SEO CONTENT -->
+<div class="seo-section">
+  <h2>About Currency Converter</h2>
+  <p>Our currency converter uses real-time exchange rates to give you the most accurate conversions for 150+ world currencies. Whether you're planning international travel, sending money abroad, or doing business globally, this tool gives you instant, reliable results.</p>
+
+  <h2>How to Use</h2>
+  <p>Enter the amount you want to convert, choose the source currency in "From" and the target currency in "To", then click <strong>Convert</strong>. Use the <strong>⇄</strong> button to instantly swap the two currencies.</p>
+
+  <h2>Why Use This Currency Converter</h2>
+  <p>Unlike many free tools, this converter fetches live rates so you always get the most up-to-date values. It supports all major currencies including USD, EUR, GBP, INR, JPY, AED, and many more — all with zero ads and no login required.</p>
+
+  <h2>Explore More Tools</h2>
+  <div class="tool-links">
+    <a href="calculator.html">Calculator</a>
+    <a href="converter.html">Unit Converter</a>
+    <a href="sip.html">SIP Calculator</a>
+    <a href="age.html">Age Calculator</a>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

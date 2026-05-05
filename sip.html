@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIP Calculator — QuikConvert</title>
+  <meta name="description" content="Calculate SIP returns and investment growth easily. Plan your mutual fund investments with our free SIP calculator. Instant maturity value estimate.">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="logo">⚡ QuikConvert</a>
+    <ul class="nav-links">
+      <li><a href="index.html"      class="nav-link">Home</a></li>
+      <li><a href="calculator.html" class="nav-link">Calculator</a></li>
+      <li><a href="converter.html"  class="nav-link">Converter</a></li>
+      <li><a href="currency.html"   class="nav-link">Currency</a></li>
+      <li><a href="age.html"        class="nav-link">Age</a></li>
+      <li><a href="qr.html"         class="nav-link">QR</a></li>
+      <li><a href="sip.html"        class="nav-link">SIP</a></li>
+      <li><a href="document.html"   class="nav-link">Docs</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger">☰</button>
+  </div>
+  <div class="mobile-menu" id="nav-menu">
+    <a href="index.html"      class="nav-link">Home</a>
+    <a href="calculator.html" class="nav-link">Calculator</a>
+    <a href="converter.html"  class="nav-link">Converter</a>
+    <a href="currency.html"   class="nav-link">Currency</a>
+    <a href="age.html"        class="nav-link">Age</a>
+    <a href="qr.html"         class="nav-link">QR</a>
+    <a href="sip.html"        class="nav-link">SIP</a>
+    <a href="document.html"   class="nav-link">Docs</a>
+  </div>
+</nav>
+
+<div class="page-md">
+  <h1 class="page-title">SIP Calculator</h1>
+  <p class="page-sub">Systematic Investment Plan — estimate your mutual fund returns</p>
+
+  <div class="grid-2">
+
+    <div class="card glow">
+      <div class="section-label">Investment Details</div>
+
+      <label for="sip-monthly">Monthly Investment (₹)</label>
+      <div style="position:relative;margin-bottom:16px;">
+        <span class="input-prefix">₹</span>
+        <input type="number" id="sip-monthly" placeholder="e.g. 5000" min="1"
+               class="has-prefix" />
+      </div>
+
+      <label for="sip-rate">Expected Annual Return (%)</label>
+      <div style="position:relative;margin-bottom:16px;">
+        <input type="number" id="sip-rate" placeholder="e.g. 12" min="0.1" max="100" step="0.1"
+               class="has-suffix" />
+        <span class="input-suffix">%</span>
+      </div>
+
+      <label for="sip-years">Investment Duration (Years)</label>
+      <div style="position:relative;margin-bottom:22px;">
+        <input type="number" id="sip-years" placeholder="e.g. 10" min="1" max="50"
+               class="has-suffix" />
+        <span class="input-suffix">yrs</span>
+      </div>
+
+      <p class="error" id="sip-error"></p>
+      <button class="btn btn-gold" id="sip-calc-btn">Calculate Returns</button>
+    </div>
+
+    <div class="card" id="sip-result-card">
+      <div class="section-label">Projected Returns</div>
+
+      <div id="sip-placeholder" style="text-align:center;padding:40px 20px;color:#444;">
+        <div style="font-size:2.5rem;margin-bottom:12px;">📈</div>
+        <div style="font-size:.9rem;">Enter your details and<br>click Calculate</div>
+      </div>
+
+      <div id="sip-result-box" style="display:none;" class="fade-in">
+        <div class="result-box" style="text-align:center;margin-bottom:16px;">
+          <div class="result-label">Maturity Value</div>
+          <div class="result-value" id="sip-maturity"></div>
+          <div class="result-sub"  id="sip-duration-note"></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+          <div class="sip-stat">
+            <div class="sip-stat-label">Total Invested</div>
+            <div class="sip-stat-val" id="sip-invested"></div>
+          </div>
+          <div class="sip-stat sip-returns">
+            <div class="sip-stat-label">Total Returns</div>
+            <div class="sip-stat-val green" id="sip-returns"></div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <div style="display:flex;justify-content:space-between;font-size:.74rem;color:#666;margin-bottom:5px;">
+            <span id="sip-bar-invested-pct">Invested (0%)</span>
+            <span id="sip-bar-returns-pct" style="color:#00c853;">Returns (0%)</span>
+          </div>
+          <div class="sip-bar-track">
+            <div class="sip-bar-invested" id="sip-bar-invested"></div>
+            <div class="sip-bar-returns"  id="sip-bar-returns"></div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="sip-mini-stat"><div class="sip-mini-label">Wealth Gain</div><div id="sip-wealth-gain"></div></div>
+          <div class="sip-mini-stat"><div class="sip-mini-label">Monthly Rate</div><div id="sip-monthly-rate"></div></div>
+          <div class="sip-mini-stat"><div class="sip-mini-label">Total Months</div><div id="sip-total-months"></div></div>
+          <div class="sip-mini-stat"><div class="sip-mini-label">Avg Monthly Return</div><div id="sip-avg-monthly"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:24px;padding:12px 18px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:12px;font-size:.78rem;color:#555;line-height:1.7;">
+    <strong style="color:#666;">Formula:</strong>
+    M = P × [((1 + i)ⁿ − 1) / i] × (1 + i) &nbsp;·&nbsp;
+    P = Monthly SIP &nbsp;·&nbsp; i = Monthly interest rate (annual ÷ 12) &nbsp;·&nbsp; n = Months &nbsp;·&nbsp;
+    Returns assume constant rate. Actual mutual fund returns may vary.
+  </div>
+</div>
+
+<!-- SEO CONTENT -->
+<div class="seo-section">
+  <h2>About SIP Calculator</h2>
+  <p>A Systematic Investment Plan (SIP) lets you invest a fixed amount in mutual funds every month. Our SIP calculator uses the standard compound interest formula to project your maturity value, total wealth gained, and return breakdown — helping you plan your financial future with confidence.</p>
+
+  <h2>How to Use</h2>
+  <p>Enter your monthly SIP amount (in ₹), the expected annual return rate (%), and the investment duration (in years). Click <strong>Calculate Returns</strong> to see your projected maturity value, total invested amount, total returns, and a visual breakdown of invested vs. returns.</p>
+
+  <h2>Why Use This SIP Calculator</h2>
+  <p>This calculator gives you a clear, visual picture of how your money can grow over time through the power of compounding. It's ideal for anyone planning mutual fund investments, retirement savings, children's education funds, or any long-term financial goal.</p>
+
+  <h2>Explore More Tools</h2>
+  <div class="tool-links">
+    <a href="calculator.html">Calculator</a>
+    <a href="currency.html">Currency Converter</a>
+    <a href="converter.html">Unit Converter</a>
+    <a href="age.html">Age Calculator</a>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

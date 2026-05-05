@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Code Generator — QuikConvert</title>
+  <meta name="description" content="Generate QR codes for any text, URL or message instantly. Free QR code generator with multiple size options and PNG download.">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="logo">⚡ QuikConvert</a>
+    <ul class="nav-links">
+      <li><a href="index.html"      class="nav-link">Home</a></li>
+      <li><a href="calculator.html" class="nav-link">Calculator</a></li>
+      <li><a href="converter.html"  class="nav-link">Converter</a></li>
+      <li><a href="currency.html"   class="nav-link">Currency</a></li>
+      <li><a href="age.html"        class="nav-link">Age</a></li>
+      <li><a href="qr.html"         class="nav-link">QR</a></li>
+      <li><a href="sip.html"        class="nav-link">SIP</a></li>
+      <li><a href="document.html"   class="nav-link">Docs</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger">☰</button>
+  </div>
+  <div class="mobile-menu" id="nav-menu">
+    <a href="index.html"      class="nav-link">Home</a>
+    <a href="calculator.html" class="nav-link">Calculator</a>
+    <a href="converter.html"  class="nav-link">Converter</a>
+    <a href="currency.html"   class="nav-link">Currency</a>
+    <a href="age.html"        class="nav-link">Age</a>
+    <a href="qr.html"         class="nav-link">QR</a>
+    <a href="sip.html"        class="nav-link">SIP</a>
+    <a href="document.html"   class="nav-link">Docs</a>
+  </div>
+</nav>
+
+<div class="page-sm">
+  <h1 class="page-title">QR Generator</h1>
+  <p class="page-sub">Generate QR codes for any text or URL instantly</p>
+
+  <div class="card">
+    <label for="qr-text">Text or URL</label>
+    <textarea id="qr-text" rows="3"
+              placeholder="Enter URL or any text…"
+              style="margin-bottom:16px;"></textarea>
+
+    <label>QR Size</label>
+    <div class="qr-size-row" id="qr-size-row">
+      <button class="qr-size-btn" data-size="128">128 px</button>
+      <button class="qr-size-btn active" data-size="256">256 px</button>
+      <button class="qr-size-btn" data-size="400">400 px</button>
+      <button class="qr-size-btn" data-size="512">512 px</button>
+    </div>
+
+    <p class="error" id="qr-error"></p>
+    <button class="btn btn-gold" id="qr-generate-btn">Generate QR Code</button>
+
+    <div id="qr-container">
+      <div id="qr-wrapper">
+        <img id="qr-img" alt="QR Code" />
+      </div>
+      <div class="qr-actions">
+        <button class="btn btn-gold"  id="qr-download-btn" style="width:auto;padding:10px 22px;">Download PNG</button>
+        <button class="btn btn-ghost" id="qr-copy-btn"     style="padding:10px 22px;">Copy URL</button>
+      </div>
+      <div class="footer-note" id="qr-text-preview"></div>
+    </div>
+  </div>
+
+  <p class="footer-note">Powered by QR Server API · Free &amp; unlimited</p>
+</div>
+
+<!-- SEO CONTENT -->
+<div class="seo-section">
+  <h2>About QR Code Generator</h2>
+  <p>Our free QR code generator creates scannable QR codes from any text, URL, phone number, or message in seconds. Choose from four size options (128px to 512px) and download the QR code as a PNG image to use anywhere.</p>
+
+  <h2>How to Use</h2>
+  <p>Type or paste your text or URL in the input field, select your preferred QR code size, and click <strong>Generate QR Code</strong>. Once generated, you can download the PNG file or copy the direct image URL to use in your projects.</p>
+
+  <h2>Why Use This QR Generator</h2>
+  <p>No signup, no watermark, and completely free. This tool is perfect for creating QR codes for business cards, product packaging, social media links, event check-ins, and more. The generated QR codes are high-quality and readable by all major QR scanner apps.</p>
+
+  <h2>Explore More Tools</h2>
+  <div class="tool-links">
+    <a href="calculator.html">Calculator</a>
+    <a href="converter.html">Unit Converter</a>
+    <a href="currency.html">Currency Converter</a>
+    <a href="document.html">Document Converter</a>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

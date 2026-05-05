@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Age Calculator — QuikConvert</title>
+  <meta name="description" content="Calculate your exact age in years, months and days instantly. Simple and accurate age calculator online. No signup required.">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="logo">⚡ QuikConvert</a>
+    <ul class="nav-links">
+      <li><a href="index.html"      class="nav-link">Home</a></li>
+      <li><a href="calculator.html" class="nav-link">Calculator</a></li>
+      <li><a href="converter.html"  class="nav-link">Converter</a></li>
+      <li><a href="currency.html"   class="nav-link">Currency</a></li>
+      <li><a href="age.html"        class="nav-link">Age</a></li>
+      <li><a href="qr.html"         class="nav-link">QR</a></li>
+      <li><a href="sip.html"        class="nav-link">SIP</a></li>
+      <li><a href="document.html"   class="nav-link">Docs</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger">☰</button>
+  </div>
+  <div class="mobile-menu" id="nav-menu">
+    <a href="index.html"      class="nav-link">Home</a>
+    <a href="calculator.html" class="nav-link">Calculator</a>
+    <a href="converter.html"  class="nav-link">Converter</a>
+    <a href="currency.html"   class="nav-link">Currency</a>
+    <a href="age.html"        class="nav-link">Age</a>
+    <a href="qr.html"         class="nav-link">QR</a>
+    <a href="sip.html"        class="nav-link">SIP</a>
+    <a href="document.html"   class="nav-link">Docs</a>
+  </div>
+</nav>
+
+<div class="page-sm">
+  <h1 class="page-title">Age Calculator</h1>
+  <p class="page-sub">Find your exact age in years, months, and days</p>
+
+  <div class="card">
+    <label for="age-dob">Date of Birth</label>
+    <input type="date" id="age-dob" style="margin-bottom:20px;" />
+    <p class="error" id="age-error"></p>
+    <button class="btn btn-gold" id="age-calc-btn">Calculate Age</button>
+
+    <div id="age-result-box" style="display:none;margin-top:28px;" class="fade-in">
+      <div class="result-box" style="text-align:center;margin-bottom:16px;">
+        <div class="age-main" id="age-years-display"></div>
+        <div class="age-sub"  id="age-sub-display"></div>
+      </div>
+      <div class="age-stats" id="age-stats"></div>
+      <div class="age-bday"  id="age-bday"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SEO CONTENT -->
+<div class="seo-section">
+  <h2>About Age Calculator</h2>
+  <p>Our age calculator gives you your exact age in years, months, and days based on your date of birth. It also shows you bonus stats like total days lived, total weeks, and how many days until your next birthday — all in seconds.</p>
+
+  <h2>How to Use</h2>
+  <p>Simply select your date of birth using the date picker and click <strong>Calculate Age</strong>. The tool will instantly display your precise age broken down into years, months, and days, along with extra stats.</p>
+
+  <h2>Why Use This Age Calculator</h2>
+  <p>Unlike a simple subtraction, this calculator accounts for leap years and varying month lengths to give you a truly precise result. It's perfect for filling out forms, verifying eligibility, celebrating milestones, or just satisfying your curiosity.</p>
+
+  <h2>Explore More Tools</h2>
+  <div class="tool-links">
+    <a href="calculator.html">Calculator</a>
+    <a href="sip.html">SIP Calculator</a>
+    <a href="currency.html">Currency Converter</a>
+    <a href="qr.html">QR Generator</a>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

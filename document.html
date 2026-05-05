@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document Converter — QuikConvert</title>
+  <meta name="description" content="Convert documents online for free. PDF to Word, Word to PDF, Image to PDF, Merge PDF, Split PDF and more. Fast, secure, no login required.">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="logo">⚡ QuikConvert</a>
+    <ul class="nav-links">
+      <li><a href="index.html"      class="nav-link">Home</a></li>
+      <li><a href="calculator.html" class="nav-link">Calculator</a></li>
+      <li><a href="converter.html"  class="nav-link">Converter</a></li>
+      <li><a href="currency.html"   class="nav-link">Currency</a></li>
+      <li><a href="age.html"        class="nav-link">Age</a></li>
+      <li><a href="qr.html"         class="nav-link">QR</a></li>
+      <li><a href="sip.html"        class="nav-link">SIP</a></li>
+      <li><a href="document.html"   class="nav-link">Docs</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger">☰</button>
+  </div>
+  <div class="mobile-menu" id="nav-menu">
+    <a href="index.html"      class="nav-link">Home</a>
+    <a href="calculator.html" class="nav-link">Calculator</a>
+    <a href="converter.html"  class="nav-link">Converter</a>
+    <a href="currency.html"   class="nav-link">Currency</a>
+    <a href="age.html"        class="nav-link">Age</a>
+    <a href="qr.html"         class="nav-link">QR</a>
+    <a href="sip.html"        class="nav-link">SIP</a>
+    <a href="document.html"   class="nav-link">Docs</a>
+  </div>
+</nav>
+
+<div class="page-md">
+  <h1 class="page-title">Document Converter</h1>
+  <p class="page-sub">Convert, merge, and split documents — fast and free</p>
+
+  <!-- Conversion type chips -->
+  <div class="chip-row" id="doc-chip-row">
+    <button class="chip active" data-type="pdf-word">PDF → Word</button>
+    <button class="chip" data-type="word-pdf">Word → PDF</button>
+    <button class="chip" data-type="img-pdf">Image → PDF</button>
+    <button class="chip" data-type="pdf-img">PDF → Image</button>
+    <button class="chip" data-type="merge-pdf">Merge PDF</button>
+    <button class="chip" data-type="split-pdf">Split PDF</button>
+    <button class="chip" data-type="pdf-ppt">PDF → PPT</button>
+    <button class="chip" data-type="ppt-pdf">PPT → PDF</button>
+    <button class="chip" data-type="excel-pdf">Excel → PDF</button>
+    <button class="chip" data-type="pdf-excel">PDF → Excel</button>
+    <button class="chip" data-type="compress-pdf">Compress PDF</button>
+    <button class="chip" data-type="rotate-pdf">Rotate PDF</button>
+  </div>
+
+  <div class="card glow">
+
+    <!-- Dynamic title -->
+    <div class="section-label" id="doc-type-label">PDF to Word Converter</div>
+
+    <!-- Accepted file info -->
+    <p class="doc-accept-note" id="doc-accept-note">Accepts: .pdf files · Max size: 25 MB</p>
+
+    <!-- Upload zone -->
+    <div class="doc-dropzone" id="doc-dropzone">
+      <div class="doc-drop-icon" id="doc-drop-icon">📄</div>
+      <div class="doc-drop-title" id="doc-drop-title">Drop your PDF here</div>
+      <div class="doc-drop-sub">or click to browse files</div>
+      <input type="file" id="doc-file-input" style="display:none;" />
+    </div>
+
+    <!-- File info (shown after pick) -->
+    <div class="doc-file-info" id="doc-file-info" style="display:none;">
+      <span class="doc-file-icon">📎</span>
+      <span class="doc-file-name" id="doc-file-name"></span>
+      <span class="doc-file-size" id="doc-file-size"></span>
+      <button class="doc-file-remove" id="doc-file-remove" title="Remove file">✕</button>
+    </div>
+
+    <!-- Second file slot (merge only) -->
+    <div id="doc-merge-slot" style="display:none;margin-top:12px;">
+      <div class="doc-dropzone doc-dropzone-sm" id="doc-dropzone2">
+        <div style="font-size:1.5rem;margin-bottom:6px;">➕</div>
+        <div style="font-size:.85rem;color:#666;">Add second PDF (optional)</div>
+        <input type="file" id="doc-file-input2" accept=".pdf" style="display:none;" />
+      </div>
+      <div class="doc-file-info" id="doc-file-info2" style="display:none;margin-top:8px;">
+        <span class="doc-file-icon">📎</span>
+        <span class="doc-file-name" id="doc-file-name2"></span>
+        <span class="doc-file-size" id="doc-file-size2"></span>
+        <button class="doc-file-remove" id="doc-file-remove2" title="Remove">✕</button>
+      </div>
+    </div>
+
+    <!-- Split PDF page range (split only) -->
+    <div id="doc-split-opts" style="display:none;margin-top:18px;">
+      <label for="doc-split-pages">Page Range to Extract</label>
+      <input type="text" id="doc-split-pages" placeholder="e.g. 1-3, 5, 7-9" style="margin-bottom:0;" />
+      <p style="color:#555;font-size:.78rem;margin-top:6px;">Leave blank to split into individual pages</p>
+    </div>
+
+    <p class="error" id="doc-error" style="margin-top:16px;"></p>
+    <div class="doc-status" id="doc-status" style="display:none;">
+      <div class="doc-spinner"></div>
+      <span id="doc-status-text">Processing your file…</span>
+    </div>
+
+    <button class="btn btn-gold" id="doc-convert-btn" style="margin-top:20px;" disabled>
+      Select a file to continue
+    </button>
+  </div>
+
+  <!-- Result -->
+  <div class="card" id="doc-result-card" style="display:none;margin-top:20px;" class="fade-in">
+    <div class="section-label">Conversion Complete</div>
+    <div class="doc-result-inner">
+      <div class="doc-result-icon">✅</div>
+      <div>
+        <div class="doc-result-name" id="doc-result-name"></div>
+        <div class="doc-result-sub"  id="doc-result-sub"></div>
+      </div>
+    </div>
+    <a id="doc-download-link" href="#" download class="btn btn-gold" style="margin-top:18px;display:block;text-align:center;text-decoration:none;">
+      ⬇ Download Converted File
+    </a>
+    <button class="btn btn-ghost" id="doc-convert-another" style="margin-top:10px;">Convert Another File</button>
+  </div>
+
+  <!-- Supported formats info -->
+  <div class="doc-formats-grid">
+    <div class="doc-format-card">
+      <div class="doc-format-icon">📄</div>
+      <div class="doc-format-name">PDF</div>
+      <div class="doc-format-desc">Convert to/from Word, PPT, Excel, Image</div>
+    </div>
+    <div class="doc-format-card">
+      <div class="doc-format-icon">📝</div>
+      <div class="doc-format-name">Word (.docx)</div>
+      <div class="doc-format-desc">Convert to PDF or extract content</div>
+    </div>
+    <div class="doc-format-card">
+      <div class="doc-format-icon">🖼️</div>
+      <div class="doc-format-name">Images</div>
+      <div class="doc-format-desc">JPG, PNG, BMP, TIFF to PDF</div>
+    </div>
+    <div class="doc-format-card">
+      <div class="doc-format-icon">📊</div>
+      <div class="doc-format-name">Excel (.xlsx)</div>
+      <div class="doc-format-desc">Convert spreadsheets to/from PDF</div>
+    </div>
+    <div class="doc-format-card">
+      <div class="doc-format-icon">📑</div>
+      <div class="doc-format-name">PowerPoint</div>
+      <div class="doc-format-desc">Convert presentations to/from PDF</div>
+    </div>
+    <div class="doc-format-card">
+      <div class="doc-format-icon">🗜️</div>
+      <div class="doc-format-name">Compress</div>
+      <div class="doc-format-desc">Reduce PDF file size without quality loss</div>
+    </div>
+  </div>
+</div>
+
+<!-- SEO CONTENT -->
+<div class="seo-section">
+  <h2>About Document Converter</h2>
+  <p>QuikConvert's document converter supports the most common file conversion types — PDF to Word, Word to PDF, Image to PDF, PDF to Image, Merge PDF, Split PDF, PDF to PowerPoint, Excel to PDF, and more. All conversions are processed securely with no files stored on our servers.</p>
+
+  <h2>How to Use</h2>
+  <p>Select the conversion type from the chips above. Drag and drop your file into the upload area or click to browse. For merge, add a second PDF file. For split, specify your page range. Then click <strong>Convert</strong> to start the process and download your converted file.</p>
+
+  <h2>Why Use This Document Converter</h2>
+  <p>No account required, no hidden fees, and no watermarks. This tool handles all common office document formats and is accessible directly in your browser. It's perfect for students, freelancers, and professionals who need quick file conversions on the go.</p>
+
+  <h2>Explore More Tools</h2>
+  <div class="tool-links">
+    <a href="calculator.html">Calculator</a>
+    <a href="converter.html">Unit Converter</a>
+    <a href="qr.html">QR Generator</a>
+    <a href="sip.html">SIP Calculator</a>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Online Calculator — QuikConvert</title>
+  <meta name="description" content="Use our free online calculator for quick and accurate calculations. Supports basic arithmetic, square, square root and more. Fast results, no install needed.">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="logo">⚡ QuikConvert</a>
+    <ul class="nav-links">
+      <li><a href="index.html"      class="nav-link">Home</a></li>
+      <li><a href="calculator.html" class="nav-link">Calculator</a></li>
+      <li><a href="converter.html"  class="nav-link">Converter</a></li>
+      <li><a href="currency.html"   class="nav-link">Currency</a></li>
+      <li><a href="age.html"        class="nav-link">Age</a></li>
+      <li><a href="qr.html"         class="nav-link">QR</a></li>
+      <li><a href="sip.html"        class="nav-link">SIP</a></li>
+      <li><a href="document.html"   class="nav-link">Docs</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger">☰</button>
+  </div>
+  <div class="mobile-menu" id="nav-menu">
+    <a href="index.html"      class="nav-link">Home</a>
+    <a href="calculator.html" class="nav-link">Calculator</a>
+    <a href="converter.html"  class="nav-link">Converter</a>
+    <a href="currency.html"   class="nav-link">Currency</a>
+    <a href="age.html"        class="nav-link">Age</a>
+    <a href="qr.html"         class="nav-link">QR</a>
+    <a href="sip.html"        class="nav-link">SIP</a>
+    <a href="document.html"   class="nav-link">Docs</a>
+  </div>
+</nav>
+
+<div class="page-md">
+  <h1 class="page-title">Free Online Calculator</h1>
+  <p class="page-sub">Full-featured scientific &amp; basic calculator</p>
+
+  <div class="grid-2">
+
+    <div class="card glow">
+      <div class="section-label">Full Calculator</div>
+      <div class="calc-screen">
+        <div class="calc-expr"    id="calc-expr"></div>
+        <div class="calc-display" id="calc-display">0</div>
+      </div>
+      <div class="calc-grid">
+        <button class="calc-btn func"   data-val="x²">x²</button>
+        <button class="calc-btn func"   data-val="√">√</button>
+        <button class="calc-btn del"    data-val="⌫">⌫</button>
+        <button class="calc-btn op"     data-val="÷">÷</button>
+
+        <button class="calc-btn digit"  data-val="7">7</button>
+        <button class="calc-btn digit"  data-val="8">8</button>
+        <button class="calc-btn digit"  data-val="9">9</button>
+        <button class="calc-btn op"     data-val="×">×</button>
+
+        <button class="calc-btn digit"  data-val="4">4</button>
+        <button class="calc-btn digit"  data-val="5">5</button>
+        <button class="calc-btn digit"  data-val="6">6</button>
+        <button class="calc-btn op"     data-val="−">−</button>
+
+        <button class="calc-btn digit"  data-val="1">1</button>
+        <button class="calc-btn digit"  data-val="2">2</button>
+        <button class="calc-btn digit"  data-val="3">3</button>
+        <button class="calc-btn op"     data-val="+">+</button>
+
+        <button class="calc-btn func"   data-val="C">C</button>
+        <button class="calc-btn func"   data-val="%">%</button>
+        <button class="calc-btn digit"  data-val="0">0</button>
+        <button class="calc-btn digit"  data-val=".">.</button>
+
+        <button class="calc-btn equals" data-val="=" style="grid-column:span 4;">=</button>
+      </div>
+    </div>
+
+    <div class="card" style="align-self:start">
+      <div class="section-label">Basic / Expression Calculator</div>
+      <p style="color:#666;font-size:.85rem;margin-bottom:18px;">
+        Type any arithmetic expression and get the result instantly (e.g. 25 * 4 + 100 / 2)
+      </p>
+      <label for="basic-input">Expression</label>
+      <input type="text" id="basic-input" placeholder="e.g. 250 * 1.18 + 50" style="margin-bottom:12px;" />
+      <button class="btn btn-gold" id="basic-calc-btn">Calculate</button>
+      <p class="error" id="basic-error"></p>
+      <div class="result-box" id="basic-result-box" style="display:none">
+        <div class="result-label">Result</div>
+        <div class="result-value" id="basic-result"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SEO CONTENT -->
+<div class="seo-section">
+  <h2>About This Calculator</h2>
+  <p>Our free online calculator helps you perform fast and accurate calculations. It supports basic arithmetic operations — addition, subtraction, multiplication, and division — as well as scientific functions like square (x²), square root (√), and percentage. Designed for quick results and ease of use, it works on all devices with no installation needed.</p>
+
+  <h2>How to Use</h2>
+  <p>Click the buttons or use your keyboard to enter numbers and operators. Press <strong>=</strong> to see the result instantly. Use <strong>⌫</strong> to delete the last digit, <strong>C</strong> to clear everything, <strong>x²</strong> to square the current value, and <strong>√</strong> to find the square root. For longer expressions, use the Basic Calculator panel on the right.</p>
+
+  <h2>Why Use This Calculator</h2>
+  <p>This calculator is fast, accurate, and works on all devices without any login or installation. It handles everything from simple sums to percentage calculations and square roots — perfect for students, professionals, and everyday use.</p>
+
+  <h2>Explore More Tools</h2>
+  <div class="tool-links">
+    <a href="converter.html">Unit Converter</a>
+    <a href="currency.html">Currency Converter</a>
+    <a href="age.html">Age Calculator</a>
+    <a href="sip.html">SIP Calculator</a>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
