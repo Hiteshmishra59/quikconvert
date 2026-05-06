@@ -1,16 +1,24 @@
 {
-  "background_color": "#000000",
-  "description": "QuikConvert is an all-in-one utility app offering powerful tools including calculator, unit converter, currency converter, age calculator, QR generator, SIP calculator and document converter.\n\nFast, accurate and easy to use.\nNo login required. Works instantly on all devices.",
-  "dir": "ltr",
-  "display": "standalone",
   "name": "QuikConvert",
-  "orientation": "any",
-  "scope": "/",
   "short_name": "QuikConvert",
-  "start_url": "https://quikconvert.in/",
+  "description": "All-in-one utility app including calculator, unit converter, currency converter, QR generator, SIP calculator and document tools.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#000000",
   "theme_color": "#0a0a0a",
   "lang": "en",
-  "categories": [
-    "utilities"
+  "categories": ["utilities"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
   ]
 }
