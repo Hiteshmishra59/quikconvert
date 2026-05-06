@@ -843,6 +843,45 @@
     });
   });
 
+  function showResult(blob, outName, outLabel) {
+    statusBox.style.display = 'none';
+    resultName.textContent = outName;
+    resultSub.textContent  = outLabel + ' · ' + formatBytes(blob.size);
+    downloadLink.setAttribute('download', outName);
+    downloadLink.href = URL.createObjectURL(blob);
+    resultCard.style.display = 'block';
+    resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    convertBtn.disabled = false;
+    convertBtn.textContent = 'Convert Now';
+  }
+
+  function imgToPdf(file, callback, onError) {
+    var reader = new FileReader();
+    reader.onerror = onError;
+    reader.onload = function(e) {
+      var dataUrl = e.target.result;
+      var img = new Image();
+      img.onerror = onError;
+      img.onload = function() {
+        try {
+          var A4_W = 595.28, A4_H = 841.89;
+          var scale = Math.min(A4_W / img.width, A4_H / img.height, 1);
+          var w = img.width  * scale;
+          var h = img.height * scale;
+          var orientation = img.width > img.height ? 'landscape' : 'portrait';
+          var pdf = new window.jspdf.jsPDF({ orientation: orientation, unit: 'pt', format: 'a4' });
+          var pageW = pdf.internal.pageSize.getWidth();
+          var pageH = pdf.internal.pageSize.getHeight();
+          var fmt = file.type.includes('png') ? 'PNG' : 'JPEG';
+          pdf.addImage(dataUrl, fmt, (pageW - w) / 2, (pageH - h) / 2, w, h);
+          callback(pdf.output('blob'));
+        } catch(err) { onError(err); }
+      };
+      img.src = dataUrl;
+    };
+    reader.readAsDataURL(file);
+  }
+
   convertBtn.addEventListener('click', function() {
     if (!selectedFile) return;
     errorEl.textContent = '';
@@ -854,30 +893,41 @@
       'Reading file…', 'Analyzing document…',
       'Converting format…', 'Optimising output…', 'Almost done…'
     ];
-    var i = 0;
+    var idx = 0;
     statusText.textContent = messages[0];
     var ticker = setInterval(function() {
-      i++;
-      if (i < messages.length) statusText.textContent = messages[i];
+      idx++;
+      if (idx < messages.length) statusText.textContent = messages[idx];
     }, 600);
 
-    setTimeout(function() {
+    var cfg = typeConfig[currentType];
+    var baseName = selectedFile.name.replace(/\.[^.]+$/, '');
+    var outName  = baseName + cfg.outExt;
+
+    function finish(blob) {
+      clearInterval(ticker);
+      showResult(blob, outName, cfg.outLabel);
+    }
+    function onError() {
       clearInterval(ticker);
       statusBox.style.display = 'none';
-
-      var cfg = typeConfig[currentType];
-      var baseName = selectedFile.name.replace(/\.[^.]+$/, '');
-      var outName  = baseName + cfg.outExt;
-
-      resultName.textContent = outName;
-      resultSub.textContent  = cfg.outLabel + ' · ' + formatBytes(selectedFile.size);
-      downloadLink.setAttribute('download', outName);
-      downloadLink.href = URL.createObjectURL(selectedFile);
-      resultCard.style.display = 'block';
-      resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      errorEl.textContent = 'Conversion failed. Please try a JPG or PNG file.';
       convertBtn.disabled = false;
       convertBtn.textContent = 'Convert Now';
-    }, 3200);
+    }
+
+    if (currentType === 'img-pdf' && window.jspdf) {
+      // Real image → PDF conversion via jsPDF
+      setTimeout(function() {
+        imgToPdf(selectedFile, finish, onError);
+      }, 2800);
+    } else {
+      // Simulated conversion for other types
+      setTimeout(function() {
+        clearInterval(ticker);
+        finish(selectedFile);
+      }, 3200);
+    }
   });
 
   anotherBtn && anotherBtn.addEventListener('click', function() {
