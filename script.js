@@ -720,35 +720,49 @@
   var errorEl      = document.getElementById('doc-error');
   var statusBox    = document.getElementById('doc-status');
   var statusText   = document.getElementById('doc-status-text');
+  /* result panels */
   var resultCard   = document.getElementById('doc-result-card');
   var resultName   = document.getElementById('doc-result-name');
   var resultSub    = document.getElementById('doc-result-sub');
   var downloadLink = document.getElementById('doc-download-link');
   var anotherBtn   = document.getElementById('doc-convert-another');
+  var resultImages = document.getElementById('doc-result-images');
+  var imgGrid      = document.getElementById('doc-img-grid');
+  var imgPageCount = document.getElementById('doc-img-page-count');
+  var anotherBtn2  = document.getElementById('doc-convert-another2');
+  var unavailBox   = document.getElementById('doc-unavailable');
+  var unavailType  = document.getElementById('doc-unavail-type');
+  var unavailBack  = document.getElementById('doc-unavailable-back');
 
-  var currentType  = 'pdf-word';
-  var selectedFile = null;
+  var currentType   = 'img-pdf';
+  var selectedFile  = null;
   var selectedFile2 = null;
 
   var typeConfig = {
-    'pdf-word':    { label:'PDF to Word Converter',     accept:'.pdf',                     dropTitle:'Drop your PDF here',    icon:'📄', acceptNote:'Accepts: .pdf · Max 25 MB',      outExt:'.docx', outLabel:'Word Document (.docx)' },
-    'word-pdf':    { label:'Word to PDF Converter',     accept:'.doc,.docx',               dropTitle:'Drop your Word file',   icon:'📝', acceptNote:'Accepts: .doc, .docx · Max 25 MB', outExt:'.pdf',  outLabel:'PDF Document (.pdf)' },
-    'img-pdf':     { label:'Image to PDF Converter',    accept:'.jpg,.jpeg,.png,.bmp,.tiff',dropTitle:'Drop your image here', icon:'🖼️', acceptNote:'Accepts: JPG, PNG, BMP, TIFF · Max 25 MB', outExt:'.pdf', outLabel:'PDF Document (.pdf)' },
-    'pdf-img':     { label:'PDF to Image Converter',    accept:'.pdf',                     dropTitle:'Drop your PDF here',    icon:'📄', acceptNote:'Accepts: .pdf · Max 25 MB',      outExt:'.zip',  outLabel:'ZIP of images (.zip)' },
-    'merge-pdf':   { label:'Merge PDF Files',           accept:'.pdf',                     dropTitle:'Drop first PDF here',   icon:'📄', acceptNote:'Accepts: .pdf files · Max 25 MB each', outExt:'.pdf', outLabel:'Merged PDF (.pdf)' },
-    'split-pdf':   { label:'Split PDF',                 accept:'.pdf',                     dropTitle:'Drop your PDF here',    icon:'📄', acceptNote:'Accepts: .pdf · Max 25 MB',      outExt:'.zip',  outLabel:'Split pages (.zip)' },
-    'pdf-ppt':     { label:'PDF to PowerPoint',         accept:'.pdf',                     dropTitle:'Drop your PDF here',    icon:'📄', acceptNote:'Accepts: .pdf · Max 25 MB',      outExt:'.pptx', outLabel:'PowerPoint (.pptx)' },
-    'ppt-pdf':     { label:'PowerPoint to PDF',         accept:'.ppt,.pptx',               dropTitle:'Drop your PPT here',    icon:'📑', acceptNote:'Accepts: .ppt, .pptx · Max 25 MB', outExt:'.pdf', outLabel:'PDF Document (.pdf)' },
-    'excel-pdf':   { label:'Excel to PDF Converter',    accept:'.xls,.xlsx',               dropTitle:'Drop your Excel file',  icon:'📊', acceptNote:'Accepts: .xls, .xlsx · Max 25 MB', outExt:'.pdf', outLabel:'PDF Document (.pdf)' },
-    'pdf-excel':   { label:'PDF to Excel Converter',    accept:'.pdf',                     dropTitle:'Drop your PDF here',    icon:'📄', acceptNote:'Accepts: .pdf · Max 25 MB',      outExt:'.xlsx', outLabel:'Excel Spreadsheet (.xlsx)' },
-    'compress-pdf':{ label:'Compress PDF',              accept:'.pdf',                     dropTitle:'Drop your PDF here',    icon:'🗜️', acceptNote:'Accepts: .pdf · Max 25 MB',      outExt:'.pdf',  outLabel:'Compressed PDF (.pdf)' },
-    'rotate-pdf':  { label:'Rotate PDF',                accept:'.pdf',                     dropTitle:'Drop your PDF here',    icon:'🔄', acceptNote:'Accepts: .pdf · Max 25 MB',      outExt:'.pdf',  outLabel:'Rotated PDF (.pdf)' },
+    'pdf-word':    { label:'PDF to Word',        accept:'.pdf',                      dropTitle:'Drop your PDF here',    icon:'📄', acceptNote:'Accepts: .pdf · Max 25 MB',                server:true  },
+    'word-pdf':    { label:'Word to PDF',         accept:'.doc,.docx',                dropTitle:'Drop your Word file',   icon:'📝', acceptNote:'Accepts: .doc, .docx · Max 25 MB',         server:true  },
+    'img-pdf':     { label:'Image to PDF',        accept:'.jpg,.jpeg,.png,.bmp,.tiff',dropTitle:'Drop your image here',  icon:'🖼️', acceptNote:'Accepts: JPG, PNG, BMP, TIFF · Max 25 MB', server:false },
+    'pdf-img':     { label:'PDF to Image',        accept:'.pdf',                      dropTitle:'Drop your PDF here',    icon:'📄', acceptNote:'Accepts: .pdf · Max 25 MB',                server:false },
+    'merge-pdf':   { label:'Merge PDF',           accept:'.pdf',                      dropTitle:'Drop first PDF here',   icon:'📄', acceptNote:'Accepts: .pdf files · Max 25 MB each',     server:true  },
+    'split-pdf':   { label:'Split PDF',           accept:'.pdf',                      dropTitle:'Drop your PDF here',    icon:'📄', acceptNote:'Accepts: .pdf · Max 25 MB',                server:true  },
+    'pdf-ppt':     { label:'PDF to PowerPoint',   accept:'.pdf',                      dropTitle:'Drop your PDF here',    icon:'📄', acceptNote:'Accepts: .pdf · Max 25 MB',                server:true  },
+    'ppt-pdf':     { label:'PowerPoint to PDF',   accept:'.ppt,.pptx',                dropTitle:'Drop your PPT here',    icon:'📑', acceptNote:'Accepts: .ppt, .pptx · Max 25 MB',        server:true  },
+    'excel-pdf':   { label:'Excel to PDF',        accept:'.xls,.xlsx',                dropTitle:'Drop your Excel file',  icon:'📊', acceptNote:'Accepts: .xls, .xlsx · Max 25 MB',        server:true  },
+    'pdf-excel':   { label:'PDF to Excel',        accept:'.pdf',                      dropTitle:'Drop your PDF here',    icon:'📄', acceptNote:'Accepts: .pdf · Max 25 MB',                server:true  },
+    'compress-pdf':{ label:'Compress PDF',        accept:'.pdf',                      dropTitle:'Drop your PDF here',    icon:'🗜️', acceptNote:'Accepts: .pdf · Max 25 MB',                server:true  },
+    'rotate-pdf':  { label:'Rotate PDF',          accept:'.pdf',                      dropTitle:'Drop your PDF here',    icon:'🔄', acceptNote:'Accepts: .pdf · Max 25 MB',                server:true  },
   };
 
   function formatBytes(b) {
     if (b < 1024) return b + ' B';
-    if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
-    return (b/1048576).toFixed(1) + ' MB';
+    if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+    return (b / 1048576).toFixed(1) + ' MB';
+  }
+
+  function hideAllResults() {
+    if (resultCard)   resultCard.style.display   = 'none';
+    if (resultImages) resultImages.style.display = 'none';
+    if (unavailBox)   unavailBox.style.display   = 'none';
   }
 
   function applyType(type) {
@@ -764,7 +778,7 @@
     clearFile(1);
     clearFile(2);
     errorEl.textContent = '';
-    resultCard.style.display = 'none';
+    hideAllResults();
   }
 
   function clearFile(slot) {
@@ -784,10 +798,7 @@
 
   function setFile(file, slot) {
     if (!file) return;
-    if (file.size > 25 * 1024 * 1024) {
-      errorEl.textContent = 'File exceeds 25 MB limit.';
-      return;
-    }
+    if (file.size > 25 * 1024 * 1024) { errorEl.textContent = 'File exceeds 25 MB limit.'; return; }
     errorEl.textContent = '';
     if (slot === 1) {
       selectedFile = file;
@@ -806,27 +817,19 @@
   }
 
   function updateBtn() {
-    if (selectedFile) {
-      convertBtn.disabled = false;
-      convertBtn.textContent = 'Convert Now';
-    } else {
-      convertBtn.disabled = true;
-      convertBtn.textContent = 'Select a file to continue';
-    }
+    convertBtn.disabled    = !selectedFile;
+    convertBtn.textContent = selectedFile ? 'Convert Now' : 'Select a file to continue';
   }
 
   function makeDragDrop(zone, input, slot) {
-    zone.addEventListener('click', function() { input.click(); });
-    zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('dragover'); });
-    zone.addEventListener('dragleave', function() { zone.classList.remove('dragover'); });
-    zone.addEventListener('drop', function(e) {
+    zone.addEventListener('click',     function()  { input.click(); });
+    zone.addEventListener('dragover',  function(e) { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', function()  { zone.classList.remove('dragover'); });
+    zone.addEventListener('drop',      function(e) {
       e.preventDefault(); zone.classList.remove('dragover');
-      var f = e.dataTransfer.files[0];
-      if (f) setFile(f, slot);
+      var f = e.dataTransfer.files[0]; if (f) setFile(f, slot);
     });
-    input.addEventListener('change', function() {
-      if (input.files[0]) setFile(input.files[0], slot);
-    });
+    input.addEventListener('change', function() { if (input.files[0]) setFile(input.files[0], slot); });
   }
 
   makeDragDrop(dropzone, fileInput, 1);
@@ -843,98 +846,187 @@
     });
   });
 
-  function showResult(blob, outName, outLabel) {
-    statusBox.style.display = 'none';
-    resultName.textContent = outName;
-    resultSub.textContent  = outLabel + ' · ' + formatBytes(blob.size);
-    downloadLink.setAttribute('download', outName);
-    downloadLink.href = URL.createObjectURL(blob);
-    resultCard.style.display = 'block';
-    resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    convertBtn.disabled = false;
-    convertBtn.textContent = 'Convert Now';
-  }
-
-  function imgToPdf(file, callback, onError) {
+  /* ── Image → PDF (jsPDF) ─────────────────────────────────────────── */
+  function imgToPdf(file, onSuccess, onError) {
     var reader = new FileReader();
-    reader.onerror = onError;
+    reader.onerror = function() { onError('Could not read the image file.'); };
     reader.onload = function(e) {
       var dataUrl = e.target.result;
       var img = new Image();
-      img.onerror = onError;
+      img.onerror = function() { onError('Could not load image. Please try a JPG or PNG file.'); };
       img.onload = function() {
         try {
           var A4_W = 595.28, A4_H = 841.89;
           var scale = Math.min(A4_W / img.width, A4_H / img.height, 1);
-          var w = img.width  * scale;
-          var h = img.height * scale;
-          var orientation = img.width > img.height ? 'landscape' : 'portrait';
-          var pdf = new window.jspdf.jsPDF({ orientation: orientation, unit: 'pt', format: 'a4' });
-          var pageW = pdf.internal.pageSize.getWidth();
-          var pageH = pdf.internal.pageSize.getHeight();
-          var fmt = file.type.includes('png') ? 'PNG' : 'JPEG';
-          pdf.addImage(dataUrl, fmt, (pageW - w) / 2, (pageH - h) / 2, w, h);
-          callback(pdf.output('blob'));
-        } catch(err) { onError(err); }
+          var w = img.width * scale, h = img.height * scale;
+          var orient = img.width > img.height ? 'landscape' : 'portrait';
+          var pdf  = new window.jspdf.jsPDF({ orientation: orient, unit: 'pt', format: 'a4' });
+          var pw   = pdf.internal.pageSize.getWidth();
+          var ph   = pdf.internal.pageSize.getHeight();
+          var fmt  = file.type.includes('png') ? 'PNG' : 'JPEG';
+          pdf.addImage(dataUrl, fmt, (pw - w) / 2, (ph - h) / 2, w, h);
+          onSuccess(pdf.output('blob'));
+        } catch (err) { onError('PDF generation failed: ' + (err.message || err)); }
       };
       img.src = dataUrl;
     };
     reader.readAsDataURL(file);
   }
 
+  /* ── PDF → Images (PDF.js) ───────────────────────────────────────── */
+  function pdfToImages(file, onProgress, onSuccess, onError) {
+    if (!window.pdfjsLib) {
+      onError('PDF.js library failed to load. Please check your internet connection and reload the page.');
+      return;
+    }
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    file.arrayBuffer().then(function(buf) {
+      return window.pdfjsLib.getDocument({ data: buf }).promise;
+    }).then(function(pdf) {
+      var total = pdf.numPages;
+      var pages = [];
+      var chain = Promise.resolve();
+      for (var i = 1; i <= total; i++) {
+        (function(n) {
+          chain = chain.then(function() {
+            onProgress('Rendering page ' + n + ' of ' + total + '…');
+            return pdf.getPage(n).then(function(page) {
+              var vp     = page.getViewport({ scale: 2.0 });
+              var canvas = document.createElement('canvas');
+              canvas.width  = vp.width;
+              canvas.height = vp.height;
+              return page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise
+                .then(function() { pages.push({ dataUrl: canvas.toDataURL('image/png'), num: n }); });
+            });
+          });
+        })(i);
+      }
+      return chain.then(function() { onSuccess(pages); });
+    }).catch(function(err) {
+      onError('Could not read this PDF. Make sure it is a valid, unencrypted PDF. (' + (err && err.message ? err.message : err) + ')');
+    });
+  }
+
+  /* ── Result display helpers ──────────────────────────────────────── */
+  function resetBtn() {
+    convertBtn.disabled    = false;
+    convertBtn.textContent = 'Convert Now';
+    statusBox.style.display = 'none';
+  }
+
+  function showSingle(blob, outName, outLabel) {
+    resetBtn();
+    resultName.textContent = outName;
+    resultSub.textContent  = outLabel + ' · ' + formatBytes(blob.size);
+    downloadLink.setAttribute('download', outName);
+    downloadLink.href = URL.createObjectURL(blob);
+    resultCard.style.display = 'block';
+    resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function showImages(pages, baseName) {
+    resetBtn();
+    imgGrid.innerHTML = '';
+    imgPageCount.textContent = pages.length + ' page' + (pages.length === 1 ? '' : 's') + ' converted to PNG';
+    pages.forEach(function(p) {
+      var wrap = document.createElement('div');
+      wrap.style.cssText = 'background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px;text-align:center;';
+
+      var img = document.createElement('img');
+      img.src = p.dataUrl;
+      img.alt = 'Page ' + p.num;
+      img.style.cssText = 'width:100%;border-radius:6px;margin-bottom:8px;max-height:200px;object-fit:contain;background:#111;display:block;';
+
+      var lbl = document.createElement('div');
+      lbl.style.cssText = 'font-size:.74rem;color:#666;margin-bottom:8px;';
+      lbl.textContent = 'Page ' + p.num;
+
+      var a = document.createElement('a');
+      a.href      = p.dataUrl;
+      a.download  = baseName + '-page-' + p.num + '.png';
+      a.className = 'btn btn-gold';
+      a.style.cssText = 'font-size:.78rem;padding:7px 0;display:block;text-align:center;text-decoration:none;';
+      a.textContent = '⬇ Download PNG';
+
+      wrap.appendChild(img);
+      wrap.appendChild(lbl);
+      wrap.appendChild(a);
+      imgGrid.appendChild(wrap);
+    });
+    resultImages.style.display = 'block';
+    resultImages.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function showUnavailable(label) {
+    resetBtn();
+    if (unavailType) unavailType.textContent = '"' + label + '"';
+    if (unavailBox)  { unavailBox.style.display = 'block'; unavailBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+  }
+
+  /* ── Convert button ──────────────────────────────────────────────── */
   convertBtn.addEventListener('click', function() {
     if (!selectedFile) return;
     errorEl.textContent = '';
     convertBtn.disabled = true;
+    hideAllResults();
     statusBox.style.display = 'flex';
-    resultCard.style.display = 'none';
 
-    var messages = [
-      'Reading file…', 'Analyzing document…',
-      'Converting format…', 'Optimising output…', 'Almost done…'
-    ];
+    var messages = ['Reading file…', 'Analysing document…', 'Converting format…', 'Optimising output…', 'Almost done…'];
     var idx = 0;
     statusText.textContent = messages[0];
-    var ticker = setInterval(function() {
-      idx++;
-      if (idx < messages.length) statusText.textContent = messages[idx];
-    }, 600);
+    var ticker = setInterval(function() { if (++idx < messages.length) statusText.textContent = messages[idx]; }, 650);
 
-    var cfg = typeConfig[currentType];
+    var cfg      = typeConfig[currentType];
     var baseName = selectedFile.name.replace(/\.[^.]+$/, '');
-    var outName  = baseName + cfg.outExt;
 
-    function finish(blob) {
-      clearInterval(ticker);
-      showResult(blob, outName, cfg.outLabel);
-    }
-    function onError() {
-      clearInterval(ticker);
+    function stopTicker() { clearInterval(ticker); }
+    function onError(msg) {
+      stopTicker();
       statusBox.style.display = 'none';
-      errorEl.textContent = 'Conversion failed. Please try a JPG or PNG file.';
-      convertBtn.disabled = false;
-      convertBtn.textContent = 'Convert Now';
+      errorEl.textContent = typeof msg === 'string' ? msg : 'Conversion failed. Please try again.';
+      resetBtn();
     }
 
-    if (currentType === 'img-pdf' && window.jspdf) {
-      // Real image → PDF conversion via jsPDF
+    if (currentType === 'img-pdf') {
       setTimeout(function() {
-        imgToPdf(selectedFile, finish, onError);
-      }, 2800);
+        stopTicker();
+        imgToPdf(selectedFile, function(blob) {
+          showSingle(blob, baseName + '.pdf', 'PDF Document (.pdf)');
+        }, onError);
+      }, 2400);
+
+    } else if (currentType === 'pdf-img') {
+      setTimeout(function() {
+        stopTicker();
+        statusText.textContent = 'Starting PDF render…';
+        statusBox.style.display = 'flex';
+        pdfToImages(selectedFile, function(msg) {
+          statusText.textContent = msg;
+        }, function(pages) {
+          statusBox.style.display = 'none';
+          showImages(pages, baseName);
+        }, onError);
+      }, 600);
+
     } else {
-      // Simulated conversion for other types
+      /* Server-side only — show informative notice, no fake download */
       setTimeout(function() {
-        clearInterval(ticker);
-        finish(selectedFile);
-      }, 3200);
+        stopTicker();
+        showUnavailable(cfg.label);
+      }, 1800);
     }
   });
 
-  anotherBtn && anotherBtn.addEventListener('click', function() {
-    resultCard.style.display = 'none';
-    clearFile(1);
-    clearFile(2);
-  });
+  function resetAll() { hideAllResults(); clearFile(1); clearFile(2); errorEl.textContent = ''; }
 
-  applyType('pdf-word');
+  anotherBtn  && anotherBtn.addEventListener('click',  resetAll);
+  anotherBtn2 && anotherBtn2.addEventListener('click', resetAll);
+  unavailBack && unavailBack.addEventListener('click',  resetAll);
+
+  /* Start with Image → PDF selected (works offline) */
+  var imgChip = chipRow.querySelector('[data-type="img-pdf"]');
+  if (imgChip) { chipRow.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); }); imgChip.classList.add('active'); }
+  applyType('img-pdf');
 })();
