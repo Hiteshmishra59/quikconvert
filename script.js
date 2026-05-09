@@ -607,6 +607,116 @@
       setTimeout(function(){ copyBtn.textContent = orig; }, 1500);
     });
   });
+
+  /* ── Mode tabs (single / batch) ── */
+  var tabSingle = document.getElementById('qr-tab-single');
+  var tabBatch  = document.getElementById('qr-tab-batch');
+  var singleCard = document.getElementById('qr-single-card');
+  var batchCard  = document.getElementById('qr-batch-card');
+
+  function activateTab(mode) {
+    if (mode === 'single') {
+      singleCard && (singleCard.style.display = 'block');
+      batchCard  && (batchCard.style.display  = 'none');
+      tabSingle.style.background = 'rgba(255,215,0,.15)'; tabSingle.style.color = '#FFD700'; tabSingle.style.borderColor = 'rgba(255,215,0,.4)';
+      tabBatch.style.background  = 'transparent';          tabBatch.style.color  = '#888';    tabBatch.style.borderColor  = 'rgba(255,255,255,.1)';
+    } else {
+      singleCard && (singleCard.style.display = 'none');
+      batchCard  && (batchCard.style.display  = 'block');
+      tabBatch.style.background  = 'rgba(255,215,0,.15)'; tabBatch.style.color  = '#FFD700'; tabBatch.style.borderColor  = 'rgba(255,215,0,.4)';
+      tabSingle.style.background = 'transparent';          tabSingle.style.color = '#888';    tabSingle.style.borderColor = 'rgba(255,255,255,.1)';
+    }
+  }
+  tabSingle && tabSingle.addEventListener('click', function() { activateTab('single'); });
+  tabBatch  && tabBatch.addEventListener('click',  function() { activateTab('batch'); });
+})();
+
+/* ──────────────────────────────────────────────
+   QR BATCH MODE
+────────────────────────────────────────────── */
+(function() {
+  var batchBtn    = document.getElementById('qr-batch-btn');
+  if (!batchBtn) return;
+
+  var batchText   = document.getElementById('qr-batch-text');
+  var batchError  = document.getElementById('qr-batch-error');
+  var batchResults= document.getElementById('qr-batch-results');
+  var batchGrid   = document.getElementById('qr-batch-grid');
+  var batchCount  = document.getElementById('qr-batch-count');
+  var sizeRow     = document.getElementById('qr-batch-size-row');
+  var batchSize   = 200;
+
+  if (sizeRow) {
+    sizeRow.querySelectorAll('.qr-size-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        sizeRow.querySelectorAll('.qr-size-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        batchSize = +btn.dataset.size;
+      });
+    });
+  }
+
+  batchBtn.addEventListener('click', function() {
+    batchError.textContent = '';
+    var raw = batchText ? batchText.value : '';
+    var lines = raw.split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l.length > 0; });
+    if (!lines.length) { batchError.textContent = 'Enter at least one item.'; return; }
+    if (lines.length > 20) { batchError.textContent = 'Maximum 20 items allowed.'; return; }
+
+    batchGrid.innerHTML = '';
+    batchCount.textContent = 'Generating ' + lines.length + ' QR code' + (lines.length > 1 ? 's' : '') + '…';
+    batchResults.style.display = 'block';
+
+    var loaded = 0;
+    lines.forEach(function(text, idx) {
+      var encoded = encodeURIComponent(text);
+      var url = 'https://api.qrserver.com/v1/create-qr-code/?size=' + batchSize + 'x' + batchSize + '&data=' + encoded + '&format=png&ecc=M';
+
+      var wrap = document.createElement('div');
+      wrap.style.cssText = 'background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;text-align:center;';
+
+      var numEl = document.createElement('div');
+      numEl.style.cssText = 'font-size:.7rem;color:#555;margin-bottom:8px;';
+      numEl.textContent = '#' + (idx + 1);
+
+      var imgWrap = document.createElement('div');
+      imgWrap.style.cssText = 'display:inline-block;padding:8px;background:#fff;border-radius:8px;margin-bottom:10px;';
+
+      var img = document.createElement('img');
+      img.width = batchSize; img.height = batchSize;
+      img.style.cssText = 'display:block;border-radius:4px;max-width:100%;';
+      img.alt = 'QR ' + (idx + 1);
+      img.onload = function() {
+        loaded++;
+        if (loaded === lines.length) {
+          batchCount.textContent = lines.length + ' QR code' + (lines.length > 1 ? 's' : '') + ' generated';
+        }
+      };
+      img.onerror = function() {
+        loaded++;
+        imgWrap.textContent = '⚠ Failed';
+        imgWrap.style.cssText += 'color:#ff4444;font-size:.8rem;padding:20px 10px;';
+      };
+      img.src = url;
+
+      var lbl = document.createElement('div');
+      lbl.style.cssText = 'font-size:.72rem;color:#666;word-break:break-all;margin-bottom:10px;max-height:36px;overflow:hidden;line-height:1.4;';
+      lbl.textContent = text.length > 40 ? text.slice(0, 40) + '…' : text;
+
+      var a = document.createElement('a');
+      a.href = url; a.target = '_blank'; a.download = 'qr-' + (idx + 1) + '.png';
+      a.className = 'btn btn-gold';
+      a.style.cssText = 'font-size:.75rem;padding:6px 0;display:block;text-decoration:none;text-align:center;';
+      a.textContent = '⬇ Download';
+
+      imgWrap.appendChild(img);
+      wrap.appendChild(numEl);
+      wrap.appendChild(imgWrap);
+      wrap.appendChild(lbl);
+      wrap.appendChild(a);
+      batchGrid.appendChild(wrap);
+    });
+  });
 })();
 
 /* ──────────────────────────────────────────────
@@ -652,7 +762,7 @@
 
     if (!monthlyIn.value || isNaN(P) || P <= 0)           { errorEl.textContent = 'Enter a valid monthly investment amount.'; return; }
     if (!rateIn.value    || isNaN(r) || r <= 0 || r > 100){ errorEl.textContent = 'Enter a valid annual return rate (1–100%).'; return; }
-    if (!yearsIn.value   || isNaN(y) || y <= 0 || y > 50) { errorEl.textContent = 'Enter a valid duration (1–50 years).'; return; }
+    if (!yearsIn.value   || isNaN(y) || y <= 0 || y > 150) { errorEl.textContent = 'Enter a valid duration (1–150 years).'; return; }
 
     var n = Math.round(y * 12);
     var i = r / 100 / 12;
@@ -693,150 +803,267 @@
 
 /* ──────────────────────────────────────────────
    DOCUMENT CONVERTER
+   Browser-side: img→pdf, pdf→img, merge, rotate, compress, split
 ────────────────────────────────────────────── */
-(function() {
-  var chipRow      = document.getElementById('doc-chip-row');
+(function () {
+  var chipRow = document.getElementById('doc-chip-row');
   if (!chipRow) return;
 
-  var dropzone     = document.getElementById('doc-dropzone');
-  var dropzone2    = document.getElementById('doc-dropzone2');
-  var fileInput    = document.getElementById('doc-file-input');
-  var fileInput2   = document.getElementById('doc-file-input2');
-  var fileInfo     = document.getElementById('doc-file-info');
-  var fileInfo2    = document.getElementById('doc-file-info2');
-  var fileName     = document.getElementById('doc-file-name');
-  var fileName2    = document.getElementById('doc-file-name2');
-  var fileSize     = document.getElementById('doc-file-size');
-  var fileSize2    = document.getElementById('doc-file-size2');
-  var removeBtn    = document.getElementById('doc-file-remove');
-  var removeBtn2   = document.getElementById('doc-file-remove2');
   var typeLabel    = document.getElementById('doc-type-label');
   var acceptNote   = document.getElementById('doc-accept-note');
-  var dropTitle    = document.getElementById('doc-drop-title');
-  var dropIcon     = document.getElementById('doc-drop-icon');
-  var mergeSlot    = document.getElementById('doc-merge-slot');
-  var splitOpts    = document.getElementById('doc-split-opts');
   var convertBtn   = document.getElementById('doc-convert-btn');
   var errorEl      = document.getElementById('doc-error');
   var statusBox    = document.getElementById('doc-status');
   var statusText   = document.getElementById('doc-status-text');
-  /* result panels */
+
+  var singleZone   = document.getElementById('doc-single-zone');
+  var dropzone     = document.getElementById('doc-dropzone');
+  var fileInput    = document.getElementById('doc-file-input');
+  var fileInfo     = document.getElementById('doc-file-info');
+  var fileName     = document.getElementById('doc-file-name');
+  var fileSize     = document.getElementById('doc-file-size');
+  var removeBtn    = document.getElementById('doc-file-remove');
+  var dropTitle    = document.getElementById('doc-drop-title');
+  var dropIcon     = document.getElementById('doc-drop-icon');
+
+  var mergeZone    = document.getElementById('doc-merge-zone');
+  var mergeList    = document.getElementById('doc-merge-list');
+  var mergeAddBtn  = document.getElementById('doc-merge-add');
+  var mergeInput   = document.getElementById('doc-merge-input');
+  var mergeCountEl = document.getElementById('doc-merge-count');
+
+  var splitOpts    = document.getElementById('doc-split-opts');
+  var splitPages   = document.getElementById('doc-split-pages');
+  var compressOpts = document.getElementById('doc-compress-opts');
+  var imgFmtOpts   = document.getElementById('doc-img-format-opts');
+  var rotateCtrl   = document.getElementById('doc-rotate-controls');
+  var rotateGrid   = document.getElementById('doc-rotate-preview-grid');
+  var rotateDisp   = document.getElementById('doc-rotate-angle-display');
+  var rotL90       = document.getElementById('doc-rot-l90');
+  var rotR90       = document.getElementById('doc-rot-r90');
+  var rot180       = document.getElementById('doc-rot-180');
+  var rotReset     = document.getElementById('doc-rot-reset');
+
   var resultCard   = document.getElementById('doc-result-card');
   var resultName   = document.getElementById('doc-result-name');
   var resultSub    = document.getElementById('doc-result-sub');
-  var downloadLink = document.getElementById('doc-download-link');
+  var dlLink       = document.getElementById('doc-download-link');
   var anotherBtn   = document.getElementById('doc-convert-another');
-  var resultImages = document.getElementById('doc-result-images');
+  var resultImgs   = document.getElementById('doc-result-images');
   var imgGrid      = document.getElementById('doc-img-grid');
-  var imgPageCount = document.getElementById('doc-img-page-count');
+  var imgCount     = document.getElementById('doc-img-page-count');
+  var imgFmtLabel  = document.getElementById('doc-img-format-label');
   var anotherBtn2  = document.getElementById('doc-convert-another2');
   var unavailBox   = document.getElementById('doc-unavailable');
   var unavailType  = document.getElementById('doc-unavail-type');
   var unavailBack  = document.getElementById('doc-unavailable-back');
 
-  var currentType   = 'img-pdf';
-  var selectedFile  = null;
-  var selectedFile2 = null;
+  var currentType  = 'img-pdf';
+  var selectedFile = null;
+  var mergeFiles   = [];
+  var compressQual = 'medium';
+  var imgFormat    = 'png';
+  var globalRot    = 0;
 
-  var typeConfig = {
-    'pdf-word':    { label:'PDF to Word',        accept:'.pdf',                      dropTitle:'Drop your PDF here',    icon:'📄', acceptNote:'Accepts: .pdf · Max 25 MB',                server:true  },
-    'word-pdf':    { label:'Word to PDF',         accept:'.doc,.docx',                dropTitle:'Drop your Word file',   icon:'📝', acceptNote:'Accepts: .doc, .docx · Max 25 MB',         server:true  },
-    'img-pdf':     { label:'Image to PDF',        accept:'.jpg,.jpeg,.png,.bmp,.tiff',dropTitle:'Drop your image here',  icon:'🖼️', acceptNote:'Accepts: JPG, PNG, BMP, TIFF · Max 25 MB', server:false },
-    'pdf-img':     { label:'PDF to Image',        accept:'.pdf',                      dropTitle:'Drop your PDF here',    icon:'📄', acceptNote:'Accepts: .pdf · Max 25 MB',                server:false },
-    'merge-pdf':   { label:'Merge PDF',           accept:'.pdf',                      dropTitle:'Drop first PDF here',   icon:'📄', acceptNote:'Accepts: .pdf files · Max 25 MB each',     server:true  },
-    'split-pdf':   { label:'Split PDF',           accept:'.pdf',                      dropTitle:'Drop your PDF here',    icon:'📄', acceptNote:'Accepts: .pdf · Max 25 MB',                server:true  },
-    'pdf-ppt':     { label:'PDF to PowerPoint',   accept:'.pdf',                      dropTitle:'Drop your PDF here',    icon:'📄', acceptNote:'Accepts: .pdf · Max 25 MB',                server:true  },
-    'ppt-pdf':     { label:'PowerPoint to PDF',   accept:'.ppt,.pptx',                dropTitle:'Drop your PPT here',    icon:'📑', acceptNote:'Accepts: .ppt, .pptx · Max 25 MB',        server:true  },
-    'excel-pdf':   { label:'Excel to PDF',        accept:'.xls,.xlsx',                dropTitle:'Drop your Excel file',  icon:'📊', acceptNote:'Accepts: .xls, .xlsx · Max 25 MB',        server:true  },
-    'pdf-excel':   { label:'PDF to Excel',        accept:'.pdf',                      dropTitle:'Drop your PDF here',    icon:'📄', acceptNote:'Accepts: .pdf · Max 25 MB',                server:true  },
-    'compress-pdf':{ label:'Compress PDF',        accept:'.pdf',                      dropTitle:'Drop your PDF here',    icon:'🗜️', acceptNote:'Accepts: .pdf · Max 25 MB',                server:true  },
-    'rotate-pdf':  { label:'Rotate PDF',          accept:'.pdf',                      dropTitle:'Drop your PDF here',    icon:'🔄', acceptNote:'Accepts: .pdf · Max 25 MB',                server:true  },
+  var BROWSER_SIDE = { 'img-pdf':1,'pdf-img':1,'merge-pdf':1,'rotate-pdf':1,'compress-pdf':1,'split-pdf':1 };
+
+  var TYPE_CFG = {
+    'img-pdf':     { label:'IMAGE TO PDF',      accept:'.jpg,.jpeg,.png,.bmp,.tiff,.tif,.webp', icon:'🖼️', drop:'Drop your image here',   note:'Accepts: JPG, PNG, BMP, TIFF, WebP · Max 25 MB' },
+    'pdf-img':     { label:'PDF TO IMAGE',      accept:'.pdf',                                  icon:'📄', drop:'Drop your PDF here',     note:'Accepts: .pdf · Max 25 MB' },
+    'merge-pdf':   { label:'MERGE PDF',         accept:'.pdf,.jpg,.jpeg,.png,.webp,.bmp',        icon:'📄', drop:'',                       note:'Add PDFs and images below · Max 25 MB each' },
+    'rotate-pdf':  { label:'ROTATE PDF',        accept:'.pdf',                                  icon:'🔄', drop:'Drop your PDF here',     note:'Accepts: .pdf · Max 25 MB' },
+    'compress-pdf':{ label:'COMPRESS PDF',      accept:'.pdf',                                  icon:'🗜️', drop:'Drop your PDF here',     note:'Accepts: .pdf · Max 25 MB' },
+    'split-pdf':   { label:'SPLIT PDF',         accept:'.pdf',                                  icon:'✂️', drop:'Drop your PDF here',     note:'Accepts: .pdf · Max 25 MB' },
+    'pdf-word':    { label:'PDF → WORD',        accept:'.pdf',                                  icon:'📄', drop:'Drop your PDF here',     note:'Accepts: .pdf · Max 25 MB' },
+    'word-pdf':    { label:'WORD → PDF',        accept:'.doc,.docx',                            icon:'📝', drop:'Drop your Word file',    note:'Accepts: .doc, .docx · Max 25 MB' },
+    'pdf-ppt':     { label:'PDF → POWERPOINT',  accept:'.pdf',                                  icon:'📄', drop:'Drop your PDF here',     note:'Accepts: .pdf · Max 25 MB' },
+    'ppt-pdf':     { label:'PPT → PDF',         accept:'.ppt,.pptx',                            icon:'📑', drop:'Drop your PPT here',     note:'Accepts: .ppt, .pptx · Max 25 MB' },
+    'excel-pdf':   { label:'EXCEL → PDF',       accept:'.xls,.xlsx',                            icon:'📊', drop:'Drop your Excel file',   note:'Accepts: .xls, .xlsx · Max 25 MB' },
+    'pdf-excel':   { label:'PDF → EXCEL',       accept:'.pdf',                                  icon:'📄', drop:'Drop your PDF here',     note:'Accepts: .pdf · Max 25 MB' }
   };
 
-  function formatBytes(b) {
+  function fmtBytes(b) {
     if (b < 1024) return b + ' B';
     if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
     return (b / 1048576).toFixed(1) + ' MB';
   }
+  function readAsDataURL(file) {
+    return new Promise(function(res, rej) {
+      var r = new FileReader(); r.onload = function(e){ res(e.target.result); }; r.onerror = rej; r.readAsDataURL(file);
+    });
+  }
+  function loadImg(src) {
+    return new Promise(function(res, rej) {
+      var i = new Image(); i.onload = function(){ res(i); }; i.onerror = rej; i.src = src;
+    });
+  }
+  function ensurePdfJs() {
+    if (window.pdfjsLib) {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      return Promise.resolve(window.pdfjsLib);
+    }
+    return new Promise(function(res, rej) {
+      var s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      s.onload = function() {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        res(window.pdfjsLib);
+      };
+      s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
 
-  function hideAllResults() {
-    if (resultCard)   resultCard.style.display   = 'none';
-    if (resultImages) resultImages.style.display = 'none';
-    if (unavailBox)   unavailBox.style.display   = 'none';
+  function hideAll() {
+    resultCard  && (resultCard.style.display  = 'none');
+    resultImgs  && (resultImgs.style.display  = 'none');
+    unavailBox  && (unavailBox.style.display  = 'none');
+  }
+  function resetBtn() {
+    convertBtn.disabled    = false;
+    convertBtn.textContent = 'Convert Now';
+    statusBox.style.display = 'none';
+  }
+  function showSingle(blob, name, desc) {
+    resetBtn(); hideAll();
+    resultName.textContent = name;
+    resultSub.textContent  = desc + ' · ' + fmtBytes(blob.size);
+    dlLink.setAttribute('download', name);
+    dlLink.href = URL.createObjectURL(blob);
+    resultCard.style.display = 'block';
+    resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function showPages(pages, base, fmt) {
+    resetBtn(); hideAll();
+    imgGrid.innerHTML = '';
+    imgCount.textContent = pages.length + ' page' + (pages.length !== 1 ? 's' : '') + ' converted';
+    if (imgFmtLabel) imgFmtLabel.textContent = fmt.toUpperCase();
+    pages.forEach(function(p) {
+      var wrap = document.createElement('div');
+      wrap.style.cssText = 'background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px;text-align:center;';
+      var img = document.createElement('img');
+      img.src = p.dataUrl;
+      img.style.cssText = 'width:100%;max-height:180px;object-fit:contain;border-radius:6px;display:block;margin-bottom:8px;background:#111;';
+      var lbl = document.createElement('div');
+      lbl.style.cssText = 'font-size:.72rem;color:#555;margin-bottom:8px;';
+      lbl.textContent = 'Page ' + p.num;
+      var a = document.createElement('a');
+      a.href = p.dataUrl;
+      a.download = base + '-p' + p.num + '.' + fmt;
+      a.className = 'btn btn-gold';
+      a.style.cssText = 'font-size:.78rem;padding:7px 0;display:block;text-align:center;text-decoration:none;';
+      a.textContent = '⬇ ' + fmt.toUpperCase();
+      wrap.appendChild(img); wrap.appendChild(lbl); wrap.appendChild(a);
+      imgGrid.appendChild(wrap);
+    });
+    resultImgs.style.display = 'block';
+    resultImgs.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function showUnavail(label) {
+    resetBtn(); hideAll();
+    if (unavailType) unavailType.textContent = '"' + label + '"';
+    unavailBox.style.display = 'block';
+    unavailBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   function applyType(type) {
-    var cfg = typeConfig[type];
     currentType = type;
-    typeLabel.textContent   = cfg.label;
-    acceptNote.textContent  = cfg.acceptNote;
-    dropTitle.textContent   = cfg.dropTitle;
-    dropIcon.textContent    = cfg.icon;
-    fileInput.accept        = cfg.accept;
-    mergeSlot.style.display = type === 'merge-pdf' ? 'block' : 'none';
-    splitOpts.style.display = type === 'split-pdf' ? 'block'  : 'none';
-    clearFile(1);
-    clearFile(2);
-    errorEl.textContent = '';
-    hideAllResults();
-  }
-
-  function clearFile(slot) {
-    if (slot === 1) {
-      selectedFile = null;
-      fileInput.value = '';
-      fileInfo.style.display = 'none';
-      dropzone.style.display = 'block';
-      updateBtn();
-    } else {
-      selectedFile2 = null;
-      if (fileInput2) fileInput2.value = '';
-      if (fileInfo2)  fileInfo2.style.display = 'none';
-      if (dropzone2)  dropzone2.style.display = 'block';
+    var cfg = TYPE_CFG[type];
+    typeLabel.textContent  = cfg.label;
+    acceptNote.textContent = cfg.note;
+    var isMerge = type === 'merge-pdf';
+    singleZone.style.display = isMerge ? 'none' : 'block';
+    mergeZone.style.display  = isMerge ? 'block' : 'none';
+    splitOpts    && (splitOpts.style.display    = type === 'split-pdf'    ? 'block' : 'none');
+    compressOpts && (compressOpts.style.display = type === 'compress-pdf' ? 'block' : 'none');
+    imgFmtOpts   && (imgFmtOpts.style.display   = type === 'pdf-img'      ? 'block' : 'none');
+    if (rotateCtrl) rotateCtrl.style.display = 'none';
+    if (!isMerge) {
+      if (dropIcon)  dropIcon.textContent  = cfg.icon;
+      if (dropTitle) dropTitle.textContent = cfg.drop;
+      if (fileInput) fileInput.accept      = cfg.accept;
     }
+    clearSingle(); clearMerge(); hideAll();
+    errorEl.textContent = '';
+    globalRot = 0;
+    if (rotateGrid) rotateGrid.innerHTML = '';
   }
 
-  function setFile(file, slot) {
+  function clearSingle() {
+    selectedFile = null;
+    if (fileInput) fileInput.value = '';
+    if (fileInfo)  fileInfo.style.display  = 'none';
+    if (dropzone)  dropzone.style.display  = 'block';
+    updateBtn();
+  }
+  function clearMerge() {
+    mergeFiles = [];
+    if (mergeList) mergeList.innerHTML = '';
+    updateMergeCount();
+    updateBtn();
+  }
+  function updateMergeCount() {
+    if (mergeCountEl) mergeCountEl.textContent = mergeFiles.length + ' file' + (mergeFiles.length !== 1 ? 's' : '') + ' added';
+  }
+  function updateBtn() {
+    var ready = currentType === 'merge-pdf' ? mergeFiles.length >= 1 : !!selectedFile;
+    convertBtn.disabled    = !ready;
+    convertBtn.textContent = ready ? 'Convert Now' : 'Select a file to continue';
+  }
+
+  function setSingleFile(file) {
     if (!file) return;
     if (file.size > 25 * 1024 * 1024) { errorEl.textContent = 'File exceeds 25 MB limit.'; return; }
     errorEl.textContent = '';
-    if (slot === 1) {
-      selectedFile = file;
-      fileName.textContent = file.name;
-      fileSize.textContent = formatBytes(file.size);
-      fileInfo.style.display = 'flex';
-      dropzone.style.display = 'none';
-      updateBtn();
-    } else {
-      selectedFile2 = file;
-      fileName2.textContent = file.name;
-      fileSize2.textContent = formatBytes(file.size);
-      fileInfo2.style.display = 'flex';
-      dropzone2.style.display = 'none';
-    }
+    selectedFile = file;
+    fileName.textContent = file.name;
+    fileSize.textContent = fmtBytes(file.size);
+    fileInfo.style.display  = 'flex';
+    dropzone.style.display  = 'none';
+    if (currentType === 'rotate-pdf') loadRotatePreview(file);
+    updateBtn();
   }
 
-  function updateBtn() {
-    convertBtn.disabled    = !selectedFile;
-    convertBtn.textContent = selectedFile ? 'Convert Now' : 'Select a file to continue';
+  function addMergeFile(file) {
+    if (mergeFiles.length >= 20) { errorEl.textContent = 'Maximum 20 files allowed.'; return; }
+    if (file.size > 25 * 1024 * 1024) { errorEl.textContent = file.name + ' exceeds 25 MB.'; return; }
+    mergeFiles.push(file);
+    var item = document.createElement('div');
+    item.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;';
+    var ico = document.createElement('span');
+    ico.textContent = (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) ? '📄' : '🖼️';
+    ico.style.fontSize = '1.1rem';
+    var nm = document.createElement('span');
+    nm.textContent = file.name;
+    nm.style.cssText = 'flex:1;font-size:.85rem;color:#ddd;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+    var sz = document.createElement('span');
+    sz.textContent = fmtBytes(file.size);
+    sz.style.cssText = 'font-size:.75rem;color:#555;white-space:nowrap;flex-shrink:0;';
+    var idx = mergeFiles.length - 1;
+    var rm = document.createElement('button');
+    rm.textContent = '✕';
+    rm.style.cssText = 'background:none;border:none;color:#555;cursor:pointer;font-size:1rem;padding:0 4px;flex-shrink:0;';
+    rm.addEventListener('click', function() { mergeFiles.splice(idx, 1); rebuildMergeList(); });
+    item.appendChild(ico); item.appendChild(nm); item.appendChild(sz); item.appendChild(rm);
+    mergeList.appendChild(item);
+    updateMergeCount(); updateBtn();
+  }
+  function rebuildMergeList() {
+    var snap = mergeFiles.slice(); mergeFiles = []; mergeList.innerHTML = '';
+    snap.forEach(addMergeFile);
+    updateMergeCount(); updateBtn();
   }
 
-  function makeDragDrop(zone, input, slot) {
-    zone.addEventListener('click',     function()  { input.click(); });
-    zone.addEventListener('dragover',  function(e) { e.preventDefault(); zone.classList.add('dragover'); });
-    zone.addEventListener('dragleave', function()  { zone.classList.remove('dragover'); });
-    zone.addEventListener('drop',      function(e) {
-      e.preventDefault(); zone.classList.remove('dragover');
-      var f = e.dataTransfer.files[0]; if (f) setFile(f, slot);
-    });
-    input.addEventListener('change', function() { if (input.files[0]) setFile(input.files[0], slot); });
+  if (dropzone) {
+    dropzone.addEventListener('click', function() { if (fileInput) fileInput.click(); });
+    dropzone.addEventListener('dragover',  function(e) { e.preventDefault(); dropzone.classList.add('dragover'); });
+    dropzone.addEventListener('dragleave', function()  { dropzone.classList.remove('dragover'); });
+    dropzone.addEventListener('drop', function(e) { e.preventDefault(); dropzone.classList.remove('dragover'); if (e.dataTransfer.files[0]) setSingleFile(e.dataTransfer.files[0]); });
   }
-
-  makeDragDrop(dropzone, fileInput, 1);
-  if (dropzone2 && fileInput2) makeDragDrop(dropzone2, fileInput2, 2);
-
-  removeBtn  && removeBtn.addEventListener('click',  function() { clearFile(1); });
-  removeBtn2 && removeBtn2.addEventListener('click', function() { clearFile(2); });
+  if (fileInput)   fileInput.addEventListener('change',  function() { if (fileInput.files[0]) setSingleFile(fileInput.files[0]); });
+  if (removeBtn)   removeBtn.addEventListener('click',   clearSingle);
+  if (mergeAddBtn) mergeAddBtn.addEventListener('click', function() { if (mergeInput) mergeInput.click(); });
+  if (mergeInput)  mergeInput.addEventListener('change', function() { Array.from(mergeInput.files).forEach(addMergeFile); mergeInput.value = ''; });
 
   chipRow.querySelectorAll('.chip').forEach(function(chip) {
     chip.addEventListener('click', function() {
@@ -846,187 +1073,626 @@
     });
   });
 
-  /* ── Image → PDF (jsPDF) ─────────────────────────────────────────── */
-  function imgToPdf(file, onSuccess, onError) {
-    var reader = new FileReader();
-    reader.onerror = function() { onError('Could not read the image file.'); };
-    reader.onload = function(e) {
-      var dataUrl = e.target.result;
-      var img = new Image();
-      img.onerror = function() { onError('Could not load image. Please try a JPG or PNG file.'); };
-      img.onload = function() {
-        try {
-          var A4_W = 595.28, A4_H = 841.89;
-          var scale = Math.min(A4_W / img.width, A4_H / img.height, 1);
-          var w = img.width * scale, h = img.height * scale;
-          var orient = img.width > img.height ? 'landscape' : 'portrait';
-          var pdf  = new window.jspdf.jsPDF({ orientation: orient, unit: 'pt', format: 'a4' });
-          var pw   = pdf.internal.pageSize.getWidth();
-          var ph   = pdf.internal.pageSize.getHeight();
-          var fmt  = file.type.includes('png') ? 'PNG' : 'JPEG';
-          pdf.addImage(dataUrl, fmt, (pw - w) / 2, (ph - h) / 2, w, h);
-          onSuccess(pdf.output('blob'));
-        } catch (err) { onError('PDF generation failed: ' + (err.message || err)); }
-      };
-      img.src = dataUrl;
-    };
-    reader.readAsDataURL(file);
+  if (imgFmtOpts) {
+    imgFmtOpts.querySelectorAll('.chip').forEach(function(c) {
+      c.addEventListener('click', function() {
+        imgFmtOpts.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('active'); });
+        c.classList.add('active'); imgFormat = c.dataset.fmt;
+      });
+    });
+  }
+  if (compressOpts) {
+    compressOpts.querySelectorAll('.chip').forEach(function(c) {
+      c.addEventListener('click', function() {
+        compressOpts.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('active'); });
+        c.classList.add('active'); compressQual = c.dataset.quality;
+      });
+    });
   }
 
-  /* ── PDF → Images (PDF.js) ───────────────────────────────────────── */
-  function pdfToImages(file, onProgress, onSuccess, onError) {
-    if (!window.pdfjsLib) {
-      onError('PDF.js library failed to load. Please check your internet connection and reload the page.');
-      return;
-    }
-    window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-    file.arrayBuffer().then(function(buf) {
-      return window.pdfjsLib.getDocument({ data: buf }).promise;
+  function loadRotatePreview(file) {
+    if (rotateCtrl) rotateCtrl.style.display = 'none';
+    if (rotateGrid) rotateGrid.innerHTML = '';
+    statusBox.style.display = 'flex';
+    statusText.textContent = 'Loading PDF preview…';
+    convertBtn.disabled = true;
+    ensurePdfJs().then(function(lib) {
+      return file.arrayBuffer().then(function(buf) { return lib.getDocument({ data: buf }).promise; });
     }).then(function(pdf) {
-      var total = pdf.numPages;
-      var pages = [];
+      statusBox.style.display = 'none';
+      rotateCtrl.style.display = 'block';
+      if (rotateDisp) rotateDisp.textContent = 'Current rotation: 0°';
       var chain = Promise.resolve();
+      var total = Math.min(pdf.numPages, 20);
       for (var i = 1; i <= total; i++) {
         (function(n) {
           chain = chain.then(function() {
-            onProgress('Rendering page ' + n + ' of ' + total + '…');
             return pdf.getPage(n).then(function(page) {
-              var vp     = page.getViewport({ scale: 2.0 });
-              var canvas = document.createElement('canvas');
-              canvas.width  = vp.width;
-              canvas.height = vp.height;
-              return page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise
-                .then(function() { pages.push({ dataUrl: canvas.toDataURL('image/png'), num: n }); });
+              var vp = page.getViewport({ scale: 0.28 });
+              var cv = document.createElement('canvas'); cv.width = vp.width; cv.height = vp.height;
+              return page.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise.then(function() {
+                var wrap = document.createElement('div');
+                wrap.style.cssText = 'text-align:center;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:8px;';
+                var img = document.createElement('img');
+                img.src = cv.toDataURL('image/jpeg', 0.7);
+                img.style.cssText = 'width:100%;border-radius:4px;display:block;margin-bottom:4px;transition:transform 0.3s ease;';
+                img.dataset.page = n;
+                var lbl = document.createElement('div');
+                lbl.style.cssText = 'font-size:.7rem;color:#555;';
+                lbl.textContent = 'p.' + n;
+                wrap.appendChild(img); wrap.appendChild(lbl);
+                rotateGrid.appendChild(wrap);
+              });
             });
           });
         })(i);
       }
-      return chain.then(function() { onSuccess(pages); });
-    }).catch(function(err) {
-      onError('Could not read this PDF. Make sure it is a valid, unencrypted PDF. (' + (err && err.message ? err.message : err) + ')');
-    });
-  }
-
-  /* ── Result display helpers ──────────────────────────────────────── */
-  function resetBtn() {
-    convertBtn.disabled    = false;
-    convertBtn.textContent = 'Convert Now';
-    statusBox.style.display = 'none';
-  }
-
-  function showSingle(blob, outName, outLabel) {
-    resetBtn();
-    resultName.textContent = outName;
-    resultSub.textContent  = outLabel + ' · ' + formatBytes(blob.size);
-    downloadLink.setAttribute('download', outName);
-    downloadLink.href = URL.createObjectURL(blob);
-    resultCard.style.display = 'block';
-    resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-
-  function showImages(pages, baseName) {
-    resetBtn();
-    imgGrid.innerHTML = '';
-    imgPageCount.textContent = pages.length + ' page' + (pages.length === 1 ? '' : 's') + ' converted to PNG';
-    pages.forEach(function(p) {
-      var wrap = document.createElement('div');
-      wrap.style.cssText = 'background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px;text-align:center;';
-
-      var img = document.createElement('img');
-      img.src = p.dataUrl;
-      img.alt = 'Page ' + p.num;
-      img.style.cssText = 'width:100%;border-radius:6px;margin-bottom:8px;max-height:200px;object-fit:contain;background:#111;display:block;';
-
-      var lbl = document.createElement('div');
-      lbl.style.cssText = 'font-size:.74rem;color:#666;margin-bottom:8px;';
-      lbl.textContent = 'Page ' + p.num;
-
-      var a = document.createElement('a');
-      a.href      = p.dataUrl;
-      a.download  = baseName + '-page-' + p.num + '.png';
-      a.className = 'btn btn-gold';
-      a.style.cssText = 'font-size:.78rem;padding:7px 0;display:block;text-align:center;text-decoration:none;';
-      a.textContent = '⬇ Download PNG';
-
-      wrap.appendChild(img);
-      wrap.appendChild(lbl);
-      wrap.appendChild(a);
-      imgGrid.appendChild(wrap);
-    });
-    resultImages.style.display = 'block';
-    resultImages.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-
-  function showUnavailable(label) {
-    resetBtn();
-    if (unavailType) unavailType.textContent = '"' + label + '"';
-    if (unavailBox)  { unavailBox.style.display = 'block'; unavailBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
-  }
-
-  /* ── Convert button ──────────────────────────────────────────────── */
-  convertBtn.addEventListener('click', function() {
-    if (!selectedFile) return;
-    errorEl.textContent = '';
-    convertBtn.disabled = true;
-    hideAllResults();
-    statusBox.style.display = 'flex';
-
-    var messages = ['Reading file…', 'Analysing document…', 'Converting format…', 'Optimising output…', 'Almost done…'];
-    var idx = 0;
-    statusText.textContent = messages[0];
-    var ticker = setInterval(function() { if (++idx < messages.length) statusText.textContent = messages[idx]; }, 650);
-
-    var cfg      = typeConfig[currentType];
-    var baseName = selectedFile.name.replace(/\.[^.]+$/, '');
-
-    function stopTicker() { clearInterval(ticker); }
-    function onError(msg) {
-      stopTicker();
+      return chain;
+    }).then(function() { updateBtn(); }).catch(function(e) {
       statusBox.style.display = 'none';
-      errorEl.textContent = typeof msg === 'string' ? msg : 'Conversion failed. Please try again.';
+      errorEl.textContent = 'Could not load PDF preview: ' + (e && e.message ? e.message : String(e));
+      updateBtn();
+    });
+  }
+
+  function applyRotDelta(delta) {
+    globalRot = ((globalRot + delta) % 360 + 360) % 360;
+    if (rotateDisp) rotateDisp.textContent = 'Current rotation: ' + globalRot + '°';
+    if (rotateGrid) {
+      rotateGrid.querySelectorAll('img[data-page]').forEach(function(img) {
+        img.style.transform = 'rotate(' + globalRot + 'deg)';
+      });
+    }
+  }
+  rotL90   && rotL90.addEventListener('click',   function() { applyRotDelta(-90); });
+  rotR90   && rotR90.addEventListener('click',   function() { applyRotDelta(90); });
+  rot180   && rot180.addEventListener('click',   function() { applyRotDelta(180); });
+  rotReset && rotReset.addEventListener('click', function() {
+    globalRot = 0;
+    if (rotateDisp) rotateDisp.textContent = 'Current rotation: 0°';
+    if (rotateGrid) rotateGrid.querySelectorAll('img[data-page]').forEach(function(img) { img.style.transform = ''; });
+  });
+
+  /* ── conversion functions ── */
+  function imgToPdf(file, cb, onErr) {
+    readAsDataURL(file).then(function(du) {
+      return loadImg(du).then(function(img) {
+        var A4W = 595.28, A4H = 841.89;
+        var s = Math.min(A4W / img.width, A4H / img.height, 1);
+        var w = img.width * s, h = img.height * s;
+        var or = img.width > img.height ? 'landscape' : 'portrait';
+        var doc = new window.jspdf.jsPDF({ orientation: or, unit: 'pt', format: 'a4' });
+        var pw = doc.internal.pageSize.getWidth(), ph = doc.internal.pageSize.getHeight();
+        doc.addImage(du, file.type === 'image/png' ? 'PNG' : 'JPEG', (pw - w) / 2, (ph - h) / 2, w, h);
+        cb(doc.output('blob'));
+      });
+    }).catch(onErr);
+  }
+
+  function pdfToImages(file, fmt, onProg, cb, onErr) {
+    ensurePdfJs().then(function(lib) {
+      return file.arrayBuffer().then(function(buf) { return lib.getDocument({ data: buf }).promise; });
+    }).then(function(pdf) {
+      var pages = [], chain = Promise.resolve(), total = pdf.numPages;
+      for (var i = 1; i <= total; i++) {
+        (function(n) {
+          chain = chain.then(function() {
+            onProg('Rendering page ' + n + ' / ' + total + '…');
+            return pdf.getPage(n).then(function(page) {
+              var vp = page.getViewport({ scale: 2 });
+              var cv = document.createElement('canvas'); cv.width = vp.width; cv.height = vp.height;
+              return page.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise.then(function() {
+                var mime = fmt === 'jpg' ? 'image/jpeg' : 'image/png';
+                var q    = fmt === 'jpg' ? 0.88 : undefined;
+                pages.push({ dataUrl: q ? cv.toDataURL(mime, q) : cv.toDataURL(mime), num: n });
+              });
+            });
+          });
+        })(i);
+      }
+      return chain.then(function() { cb(pages); });
+    }).catch(onErr);
+  }
+
+  function mergePdfs(files, onProg, cb, onErr) {
+    var A4W = 595.28, A4H = 841.89;
+    ensurePdfJs().then(function() {
+      var doc = new window.jspdf.jsPDF({ unit: 'pt', format: 'a4' });
+      var first = true, chain = Promise.resolve();
+      files.forEach(function(file, fi) {
+        chain = chain.then(function() {
+          onProg('Processing ' + (fi + 1) + ' / ' + files.length + ': ' + file.name);
+          var isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+          if (isPdf) {
+            return file.arrayBuffer().then(function(buf) {
+              return window.pdfjsLib.getDocument({ data: buf }).promise;
+            }).then(function(pdfDoc) {
+              var pc = Promise.resolve();
+              for (var pi = 1; pi <= pdfDoc.numPages; pi++) {
+                (function(pn) {
+                  pc = pc.then(function() {
+                    return pdfDoc.getPage(pn).then(function(page) {
+                      var vp = page.getViewport({ scale: 1.5 });
+                      var cv = document.createElement('canvas'); cv.width = vp.width; cv.height = vp.height;
+                      return page.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise.then(function() {
+                        var img = cv.toDataURL('image/jpeg', 0.88);
+                        if (!first) doc.addPage([A4W, A4H]); first = false;
+                        var s = Math.min(A4W / vp.width, A4H / vp.height);
+                        doc.addImage(img, 'JPEG', (A4W - vp.width * s) / 2, (A4H - vp.height * s) / 2, vp.width * s, vp.height * s);
+                      });
+                    });
+                  });
+                })(pi);
+              }
+              return pc;
+            });
+          } else {
+            return readAsDataURL(file).then(function(du) {
+              return loadImg(du).then(function(img) {
+                if (!first) doc.addPage([A4W, A4H]); first = false;
+                var s = Math.min(A4W / img.width, A4H / img.height, 1);
+                var w = img.width * s, h = img.height * s;
+                doc.addImage(du, file.type === 'image/png' ? 'PNG' : 'JPEG', (A4W - w) / 2, (A4H - h) / 2, w, h);
+              });
+            });
+          }
+        });
+      });
+      return chain.then(function() { cb(doc.output('blob')); });
+    }).catch(onErr);
+  }
+
+  function rotatePdf(file, angle, onProg, cb, onErr) {
+    var norm = ((angle % 360) + 360) % 360;
+    var doc = null;
+    ensurePdfJs().then(function(lib) {
+      return file.arrayBuffer().then(function(buf) { return lib.getDocument({ data: buf }).promise; });
+    }).then(function(pdf) {
+      var chain = Promise.resolve(), total = pdf.numPages;
+      for (var i = 1; i <= total; i++) {
+        (function(n) {
+          chain = chain.then(function() {
+            onProg('Rotating page ' + n + ' / ' + total + '…');
+            return pdf.getPage(n).then(function(page) {
+              var vp = page.getViewport({ scale: 1.5, rotation: norm });
+              var cv = document.createElement('canvas'); cv.width = vp.width; cv.height = vp.height;
+              return page.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise.then(function() {
+                var img = cv.toDataURL('image/jpeg', 0.88);
+                var land = vp.width > vp.height;
+                if (!doc) {
+                  doc = new window.jspdf.jsPDF({ orientation: land ? 'landscape' : 'portrait', unit: 'pt', format: [vp.width, vp.height] });
+                } else {
+                  doc.addPage([vp.width, vp.height], land ? 'landscape' : 'portrait');
+                }
+                doc.addImage(img, 'JPEG', 0, 0, vp.width, vp.height);
+              });
+            });
+          });
+        })(i);
+      }
+      return chain.then(function() { if (!doc) throw new Error('No pages rendered'); cb(doc.output('blob')); });
+    }).catch(onErr);
+  }
+
+  function compressPdf(file, qual, onProg, cb, onErr) {
+    var scale = qual === 'high' ? 1.2 : qual === 'medium' ? 0.8 : 0.5;
+    var jpegQ = qual === 'high' ? 0.82 : qual === 'medium' ? 0.60 : 0.35;
+    var doc = null;
+    ensurePdfJs().then(function(lib) {
+      return file.arrayBuffer().then(function(buf) { return lib.getDocument({ data: buf }).promise; });
+    }).then(function(pdf) {
+      var chain = Promise.resolve(), total = pdf.numPages;
+      for (var i = 1; i <= total; i++) {
+        (function(n) {
+          chain = chain.then(function() {
+            onProg('Compressing page ' + n + ' / ' + total + '…');
+            return pdf.getPage(n).then(function(page) {
+              var origVp = page.getViewport({ scale: 1 });
+              var vp     = page.getViewport({ scale: scale });
+              var cv = document.createElement('canvas'); cv.width = vp.width; cv.height = vp.height;
+              return page.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise.then(function() {
+                var img  = cv.toDataURL('image/jpeg', jpegQ);
+                var pw = origVp.width, ph = origVp.height, land = pw > ph;
+                if (!doc) {
+                  doc = new window.jspdf.jsPDF({ orientation: land ? 'landscape' : 'portrait', unit: 'pt', format: [pw, ph] });
+                } else {
+                  doc.addPage([pw, ph], land ? 'landscape' : 'portrait');
+                }
+                doc.addImage(img, 'JPEG', 0, 0, pw, ph);
+              });
+            });
+          });
+        })(i);
+      }
+      return chain.then(function() { if (!doc) throw new Error('No pages rendered'); cb(doc.output('blob')); });
+    }).catch(onErr);
+  }
+
+  function splitPdf(file, rangeStr, onProg, cb, onErr) {
+    ensurePdfJs().then(function(lib) {
+      return file.arrayBuffer().then(function(buf) { return lib.getDocument({ data: buf }).promise; });
+    }).then(function(pdf) {
+      var total = pdf.numPages, pages = [];
+      if (!rangeStr || !rangeStr.trim()) {
+        for (var i = 1; i <= total; i++) pages.push(i);
+      } else {
+        rangeStr.split(',').forEach(function(part) {
+          part = part.trim();
+          var m = part.match(/^(\d+)-(\d+)$/);
+          if (m) { for (var j = +m[1]; j <= +m[2]; j++) { if (j >= 1 && j <= total) pages.push(j); } }
+          else { var n = +part; if (n >= 1 && n <= total) pages.push(n); }
+        });
+      }
+      if (!pages.length) { onErr('No valid pages in range. PDF has ' + total + ' page' + (total > 1 ? 's' : '') + '.'); return; }
+      var results = [], chain = Promise.resolve();
+      pages.forEach(function(pn) {
+        chain = chain.then(function() {
+          onProg('Extracting page ' + pn + ' / ' + total + '…');
+          return pdf.getPage(pn).then(function(page) {
+            var vp = page.getViewport({ scale: 2 });
+            var cv = document.createElement('canvas'); cv.width = vp.width; cv.height = vp.height;
+            return page.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise.then(function() {
+              results.push({ dataUrl: cv.toDataURL('image/png'), num: pn });
+            });
+          });
+        });
+      });
+      return chain.then(function() { cb(results); });
+    }).catch(onErr);
+  }
+
+  convertBtn.addEventListener('click', function() {
+    errorEl.textContent = ''; hideAll();
+    convertBtn.disabled = true; statusBox.style.display = 'flex';
+    var msgs = ['Reading file…', 'Analysing…', 'Converting…', 'Optimising…', 'Finalising…'], mi = 0;
+    statusText.textContent = msgs[0];
+    var ticker = setInterval(function() { if (++mi < msgs.length) statusText.textContent = msgs[mi]; }, 800);
+    function stopTicker() { clearInterval(ticker); }
+    function onErr(e) {
+      stopTicker(); statusBox.style.display = 'none';
+      errorEl.textContent = typeof e === 'string' ? e : (e && e.message ? e.message : 'Conversion failed. Please try again.');
       resetBtn();
     }
+    var cfg  = TYPE_CFG[currentType];
+    var base = (selectedFile ? selectedFile.name : 'merged').replace(/\.[^.]+$/, '');
 
+    if (!BROWSER_SIDE[currentType]) {
+      setTimeout(function() { stopTicker(); showUnavail(cfg.label); }, 1600);
+      return;
+    }
     if (currentType === 'img-pdf') {
-      setTimeout(function() {
-        stopTicker();
-        imgToPdf(selectedFile, function(blob) {
-          showSingle(blob, baseName + '.pdf', 'PDF Document (.pdf)');
-        }, onError);
-      }, 2400);
-
+      setTimeout(function() { stopTicker(); imgToPdf(selectedFile, function(blob) { showSingle(blob, base + '.pdf', 'PDF Document'); }, onErr); }, 2000);
     } else if (currentType === 'pdf-img') {
-      setTimeout(function() {
-        stopTicker();
-        statusText.textContent = 'Starting PDF render…';
-        statusBox.style.display = 'flex';
-        pdfToImages(selectedFile, function(msg) {
-          statusText.textContent = msg;
-        }, function(pages) {
-          statusBox.style.display = 'none';
-          showImages(pages, baseName);
-        }, onError);
-      }, 600);
-
-    } else {
-      /* Server-side only — show informative notice, no fake download */
-      setTimeout(function() {
-        stopTicker();
-        showUnavailable(cfg.label);
-      }, 1800);
+      stopTicker(); statusText.textContent = 'Rendering pages…';
+      pdfToImages(selectedFile, imgFormat, function(msg) { statusText.textContent = msg; }, function(pages) { statusBox.style.display = 'none'; showPages(pages, base, imgFormat); }, onErr);
+    } else if (currentType === 'merge-pdf') {
+      stopTicker(); statusText.textContent = 'Preparing merge…';
+      mergePdfs(mergeFiles.slice(), function(msg) { statusText.textContent = msg; }, function(blob) { statusBox.style.display = 'none'; showSingle(blob, 'merged.pdf', 'Merged PDF Document'); }, onErr);
+    } else if (currentType === 'rotate-pdf') {
+      if (globalRot === 0) { stopTicker(); statusBox.style.display = 'none'; errorEl.textContent = 'Use the rotation buttons above to rotate the PDF first.'; resetBtn(); return; }
+      stopTicker(); statusText.textContent = 'Applying rotation…';
+      rotatePdf(selectedFile, globalRot, function(msg) { statusText.textContent = msg; }, function(blob) { statusBox.style.display = 'none'; showSingle(blob, base + '-rotated.pdf', 'Rotated PDF'); }, onErr);
+    } else if (currentType === 'compress-pdf') {
+      stopTicker(); statusText.textContent = 'Compressing…';
+      compressPdf(selectedFile, compressQual, function(msg) { statusText.textContent = msg; }, function(blob) { statusBox.style.display = 'none'; showSingle(blob, base + '-compressed.pdf', 'Compressed PDF'); }, onErr);
+    } else if (currentType === 'split-pdf') {
+      stopTicker(); statusText.textContent = 'Splitting pages…';
+      splitPdf(selectedFile, splitPages ? splitPages.value : '', function(msg) { statusText.textContent = msg; }, function(pages) { statusBox.style.display = 'none'; showPages(pages, base, 'png'); }, onErr);
     }
   });
 
-  function resetAll() { hideAllResults(); clearFile(1); clearFile(2); errorEl.textContent = ''; }
-
+  function resetAll() {
+    hideAll(); clearSingle(); clearMerge();
+    errorEl.textContent = '';
+    globalRot = 0;
+    if (rotateGrid) rotateGrid.innerHTML = '';
+    if (rotateCtrl) rotateCtrl.style.display = 'none';
+  }
   anotherBtn  && anotherBtn.addEventListener('click',  resetAll);
   anotherBtn2 && anotherBtn2.addEventListener('click', resetAll);
   unavailBack && unavailBack.addEventListener('click',  resetAll);
 
-  /* Start with Image → PDF selected (works offline) */
-  var imgChip = chipRow.querySelector('[data-type="img-pdf"]');
-  if (imgChip) { chipRow.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); }); imgChip.classList.add('active'); }
   applyType('img-pdf');
+})();
+
+/* ──────────────────────────────────────────────
+   IMAGE RESIZER
+────────────────────────────────────────────── */
+(function () {
+  var dropzone = document.getElementById('resize-dropzone');
+  if (!dropzone) return;
+
+  var fileInput   = document.getElementById('resize-file-input');
+  var fileInfo    = document.getElementById('resize-file-info');
+  var fileNameEl  = document.getElementById('resize-file-name');
+  var origDimsEl  = document.getElementById('resize-orig-dims');
+  var fileSizeEl  = document.getElementById('resize-file-size');
+  var removeBtn   = document.getElementById('resize-file-remove');
+  var optCard     = document.getElementById('resize-options-card');
+  var prevCard    = document.getElementById('resize-preview-card');
+  var pctZone     = document.getElementById('resize-percent-zone');
+  var pxZone      = document.getElementById('resize-pixels-zone');
+  var widthIn     = document.getElementById('resize-width');
+  var heightIn    = document.getElementById('resize-height');
+  var lockChk     = document.getElementById('resize-lock-ratio');
+  var customPct   = document.getElementById('resize-custom-pct');
+  var fmtRow      = document.getElementById('resize-fmt-row');
+  var jpgQualDiv  = document.getElementById('resize-jpg-quality');
+  var qualSlider  = document.getElementById('resize-quality-slider');
+  var qualVal     = document.getElementById('resize-quality-val');
+  var resizeBtn   = document.getElementById('resize-btn');
+  var errorEl     = document.getElementById('resize-error');
+  var beforeImg   = document.getElementById('resize-before-img');
+  var afterImg    = document.getElementById('resize-after-img');
+  var beforeInfo  = document.getElementById('resize-before-info');
+  var afterInfo   = document.getElementById('resize-after-info');
+  var dlLink      = document.getElementById('resize-download-link');
+  var anotherBtn  = document.getElementById('resize-another');
+
+  var origFile = null, origImg = null;
+  var resizeMode = 'percent', selectedPct = 50, outputFmt = 'same';
+
+  function fmtBytes(b) {
+    if (b < 1024) return b + ' B';
+    if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+    return (b / 1048576).toFixed(1) + ' MB';
+  }
+
+  dropzone.addEventListener('click', function() { if (fileInput) fileInput.click(); });
+  dropzone.addEventListener('dragover',  function(e) { e.preventDefault(); dropzone.style.borderColor = 'rgba(255,215,0,.6)'; });
+  dropzone.addEventListener('dragleave', function()  { dropzone.style.borderColor = 'rgba(255,215,0,.25)'; });
+  dropzone.addEventListener('drop', function(e) {
+    e.preventDefault(); dropzone.style.borderColor = 'rgba(255,215,0,.25)';
+    if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
+  });
+  if (fileInput) fileInput.addEventListener('change', function() { if (fileInput.files[0]) loadFile(fileInput.files[0]); });
+
+  function loadFile(file) {
+    if (!file.type.startsWith('image/')) { if (errorEl) errorEl.textContent = 'Please select an image file.'; return; }
+    if (file.size > 50 * 1024 * 1024)   { if (errorEl) errorEl.textContent = 'File too large (max 50 MB).'; return; }
+    origFile = file;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      origImg = new Image();
+      origImg.onload = function() {
+        if (fileNameEl) fileNameEl.textContent = file.name;
+        if (origDimsEl) origDimsEl.textContent = origImg.width + ' × ' + origImg.height + ' px';
+        if (fileSizeEl) fileSizeEl.textContent = fmtBytes(file.size);
+        if (fileInfo)   fileInfo.style.display  = 'flex';
+        dropzone.style.display = 'none';
+        if (optCard)    optCard.style.display   = 'block';
+        if (prevCard)   prevCard.style.display  = 'none';
+        if (errorEl)    errorEl.textContent     = '';
+        if (widthIn)    widthIn.value  = origImg.width;
+        if (heightIn)   heightIn.value = origImg.height;
+      };
+      origImg.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  if (removeBtn) removeBtn.addEventListener('click', function() {
+    origFile = null; origImg = null;
+    if (fileInfo)  fileInfo.style.display  = 'none';
+    dropzone.style.display = 'block';
+    if (fileInput) fileInput.value = '';
+    if (optCard)   optCard.style.display   = 'none';
+    if (prevCard)  prevCard.style.display  = 'none';
+    if (errorEl)   errorEl.textContent     = '';
+  });
+
+  document.querySelectorAll('[data-mode]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('[data-mode]').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      resizeMode = btn.dataset.mode;
+      if (pctZone) pctZone.style.display = resizeMode === 'percent' ? 'block' : 'none';
+      if (pxZone)  pxZone.style.display  = resizeMode === 'pixels'  ? 'block' : 'none';
+    });
+  });
+
+  if (pctZone) {
+    pctZone.querySelectorAll('.chip[data-pct]').forEach(function(c) {
+      c.addEventListener('click', function() {
+        pctZone.querySelectorAll('.chip[data-pct]').forEach(function(x) { x.classList.remove('active'); });
+        c.classList.add('active');
+        selectedPct = +c.dataset.pct;
+        if (customPct) customPct.value = '';
+      });
+    });
+  }
+
+  if (widthIn && heightIn) {
+    widthIn.addEventListener('input', function() {
+      if (lockChk && lockChk.checked && origImg && origImg.height)
+        heightIn.value = Math.round(+widthIn.value * origImg.height / origImg.width) || '';
+    });
+    heightIn.addEventListener('input', function() {
+      if (lockChk && lockChk.checked && origImg && origImg.width)
+        widthIn.value = Math.round(+heightIn.value * origImg.width / origImg.height) || '';
+    });
+  }
+
+  if (fmtRow) {
+    fmtRow.querySelectorAll('.chip').forEach(function(c) {
+      c.addEventListener('click', function() {
+        fmtRow.querySelectorAll('.chip').forEach(function(x) { x.classList.remove('active'); });
+        c.classList.add('active');
+        outputFmt = c.dataset.fmt;
+        if (jpgQualDiv) jpgQualDiv.style.display = outputFmt === 'image/jpeg' ? 'block' : 'none';
+      });
+    });
+  }
+
+  if (qualSlider && qualVal) {
+    qualSlider.addEventListener('input', function() { qualVal.textContent = qualSlider.value; });
+  }
+
+  if (resizeBtn) resizeBtn.addEventListener('click', function() {
+    if (!origImg || !origFile) return;
+    if (errorEl) errorEl.textContent = '';
+    var tw, th;
+    if (resizeMode === 'percent') {
+      var pct = customPct && customPct.value ? +customPct.value : selectedPct;
+      if (!pct || pct < 1 || pct > 5000) { if (errorEl) errorEl.textContent = 'Enter a percentage between 1 and 5000.'; return; }
+      tw = Math.round(origImg.width  * pct / 100);
+      th = Math.round(origImg.height * pct / 100);
+    } else {
+      tw = widthIn  ? +widthIn.value  : 0;
+      th = heightIn ? +heightIn.value : 0;
+      if (!tw || !th || tw < 1 || th < 1) { if (errorEl) errorEl.textContent = 'Enter valid width and height.'; return; }
+    }
+    tw = Math.min(tw, 8000); th = Math.min(th, 8000);
+    var cv  = document.createElement('canvas'); cv.width = tw; cv.height = th;
+    cv.getContext('2d').drawImage(origImg, 0, 0, tw, th);
+    var mime    = outputFmt === 'same' ? (origFile.type || 'image/jpeg') : outputFmt;
+    var quality = mime === 'image/jpeg' ? (+qualSlider.value / 100) : undefined;
+    var dataUrl = quality ? cv.toDataURL(mime, quality) : cv.toDataURL(mime);
+    var ext     = mime === 'image/png' ? 'png' : mime === 'image/webp' ? 'webp' : 'jpg';
+    var outName = origFile.name.replace(/\.[^.]+$/, '') + '-resized.' + ext;
+    if (beforeImg)  beforeImg.src = origImg.src;
+    if (beforeInfo) beforeInfo.textContent = origImg.width + ' × ' + origImg.height + ' px · ' + fmtBytes(origFile.size);
+    if (afterImg)   afterImg.src = dataUrl;
+    if (afterInfo) {
+      var approxBytes = Math.round((dataUrl.length - dataUrl.indexOf(',') - 1) * 0.75);
+      afterInfo.textContent = tw + ' × ' + th + ' px · ~' + fmtBytes(approxBytes);
+    }
+    if (dlLink) { dlLink.href = dataUrl; dlLink.setAttribute('download', outName); }
+    if (prevCard) { prevCard.style.display = 'block'; prevCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+  });
+
+  if (anotherBtn) anotherBtn.addEventListener('click', function() {
+    origFile = null; origImg = null;
+    if (fileInfo)  fileInfo.style.display  = 'none';
+    dropzone.style.display = 'block';
+    if (fileInput) fileInput.value = '';
+    if (optCard)   optCard.style.display   = 'none';
+    if (prevCard)  prevCard.style.display  = 'none';
+    if (errorEl)   errorEl.textContent     = '';
+  });
+})();
+
+/* ──────────────────────────────────────────────
+   EMI CALCULATOR
+────────────────────────────────────────────── */
+(function () {
+  var calcBtn = document.getElementById('emi-calc-btn');
+  if (!calcBtn) return;
+
+  var amountIn  = document.getElementById('emi-amount');
+  var rateIn    = document.getElementById('emi-rate');
+  var tenureIn  = document.getElementById('emi-tenure');
+  var errorEl   = document.getElementById('emi-error');
+  var pholder   = document.getElementById('emi-placeholder');
+  var resultBox = document.getElementById('emi-result-box');
+  var tenureSfx = document.getElementById('emi-tenure-suffix');
+  var unitYrBtn = document.getElementById('emi-unit-yr');
+  var unitMoBtn = document.getElementById('emi-unit-mo');
+  var showTable = document.getElementById('emi-show-table');
+  var tableWrap = document.getElementById('emi-table-wrap');
+  var tableBody = document.getElementById('emi-table-body');
+  var tableNote = document.getElementById('emi-table-note');
+  var emiMo     = document.getElementById('emi-monthly');
+  var emiNote   = document.getElementById('emi-note');
+  var emiPrin   = document.getElementById('emi-principal');
+  var emiInt    = document.getElementById('emi-interest');
+  var emiTot    = document.getElementById('emi-total');
+  var barPPct   = document.getElementById('emi-bar-principal-pct');
+  var barIPct   = document.getElementById('emi-bar-interest-pct');
+  var barP      = document.getElementById('emi-bar-principal');
+  var barI      = document.getElementById('emi-bar-interest');
+
+  var tenureUnit = 'years';
+  var tableOpen  = false;
+
+  function fmtINR(n) {
+    return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n);
+  }
+  function fmt2(n) {
+    return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 }).format(n);
+  }
+
+  function setUnit(unit) {
+    tenureUnit = unit;
+    var yr = unit === 'years';
+    if (unitYrBtn) { unitYrBtn.style.background = yr  ? 'rgba(255,215,0,.15)' : 'transparent'; unitYrBtn.style.color = yr  ? '#FFD700' : '#888'; }
+    if (unitMoBtn) { unitMoBtn.style.background = !yr ? 'rgba(255,215,0,.15)' : 'transparent'; unitMoBtn.style.color = !yr ? '#FFD700' : '#888'; }
+    if (tenureSfx) tenureSfx.textContent = yr ? 'yrs' : 'mo';
+  }
+  unitYrBtn && unitYrBtn.addEventListener('click', function() { setUnit('years'); });
+  unitMoBtn && unitMoBtn.addEventListener('click', function() { setUnit('months'); });
+
+  calcBtn.addEventListener('click', function() {
+    if (errorEl) errorEl.textContent = '';
+    var P = parseFloat(amountIn ? amountIn.value : '');
+    var r = parseFloat(rateIn   ? rateIn.value   : '');
+    var t = parseFloat(tenureIn ? tenureIn.value  : '');
+    if (isNaN(P) || P <= 0)          { if (errorEl) errorEl.textContent = 'Enter a valid loan amount.'; return; }
+    if (isNaN(r) || r <= 0 || r > 50){ if (errorEl) errorEl.textContent = 'Enter a valid interest rate (0.1–50%).'; return; }
+    if (isNaN(t) || t <= 0)          { if (errorEl) errorEl.textContent = 'Enter a valid tenure.'; return; }
+
+    var n = tenureUnit === 'years' ? Math.round(t * 12) : Math.round(t);
+    if (n < 1 || n > 360) { if (errorEl) errorEl.textContent = 'Tenure must be between 1 and 360 months (30 years).'; return; }
+
+    var mr = r / 100 / 12;
+    var emi = mr === 0 ? P / n : (P * mr * Math.pow(1 + mr, n)) / (Math.pow(1 + mr, n) - 1);
+    var totalPay = emi * n;
+    var totalInt = totalPay - P;
+    var pp = (P / totalPay * 100).toFixed(1);
+    var ip = (totalInt / totalPay * 100).toFixed(1);
+
+    if (emiMo)   emiMo.textContent   = fmtINR(emi);
+    if (emiNote) emiNote.textContent = 'for ' + n + ' month' + (n > 1 ? 's' : '') + ' @ ' + r + '% p.a.';
+    if (emiPrin) emiPrin.textContent = fmtINR(P);
+    if (emiInt)  emiInt.textContent  = fmtINR(totalInt);
+    if (emiTot)  emiTot.textContent  = fmtINR(totalPay);
+    if (barPPct) barPPct.textContent = 'Principal (' + pp + '%)';
+    if (barIPct) barIPct.textContent = 'Interest (' + ip + '%)';
+    if (barP)    barP.style.width    = pp + '%';
+    if (barI)    barI.style.width    = ip + '%';
+
+    if (pholder)   pholder.style.display   = 'none';
+    if (resultBox) resultBox.style.display = 'block';
+
+    if (tableBody) {
+      tableBody.innerHTML = '';
+      var balance  = P;
+      var rowLimit = n <= 60 ? n : 24;
+      for (var m = 1; m <= rowLimit; m++) {
+        var interest  = balance * mr;
+        var principal = emi - interest;
+        balance -= principal;
+        if (balance < 0) balance = 0;
+        var tr = document.createElement('tr');
+        tr.style.background = m % 2 === 0 ? 'rgba(255,255,255,.02)' : 'transparent';
+        tr.innerHTML =
+          '<td style="padding:7px 10px;">' + m + '</td>' +
+          '<td style="padding:7px 10px;text-align:right;">' + fmt2(emi) + '</td>' +
+          '<td style="padding:7px 10px;text-align:right;color:#FFD700;">' + fmt2(principal) + '</td>' +
+          '<td style="padding:7px 10px;text-align:right;color:#FFA500;">' + fmt2(interest) + '</td>' +
+          '<td style="padding:7px 10px;text-align:right;">' + fmt2(Math.max(0, balance)) + '</td>';
+        tableBody.appendChild(tr);
+      }
+      if (tableNote) tableNote.textContent = rowLimit < n ? 'Showing first ' + rowLimit + ' of ' + n + ' months.' : '';
+    }
+    tableOpen = false;
+    if (tableWrap) tableWrap.style.display = 'none';
+    if (showTable) showTable.textContent = 'Show Amortization Schedule ▾';
+  });
+
+  if (showTable) showTable.addEventListener('click', function() {
+    tableOpen = !tableOpen;
+    if (tableWrap) tableWrap.style.display = tableOpen ? 'block' : 'none';
+    showTable.textContent = tableOpen ? 'Hide Amortization Schedule ▴' : 'Show Amortization Schedule ▾';
+    if (tableOpen && tableWrap) tableWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+
+  [amountIn, rateIn, tenureIn].forEach(function(el) {
+    el && el.addEventListener('input', function() {
+      if (pholder)   pholder.style.display   = 'block';
+      if (resultBox) resultBox.style.display = 'none';
+      if (tableWrap) tableWrap.style.display = 'none';
+      if (errorEl)   errorEl.textContent     = '';
+    });
+  });
 })();
