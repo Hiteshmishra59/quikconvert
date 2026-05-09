@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Resizer — QuikConvert</title>
+  <meta name="description" content="Resize images online for free. Change dimensions or percentage, convert format (PNG, JPG, WebP). Fast, browser-based — no upload needed.">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="logo">⚡ QuikConvert</a>
+    <ul class="nav-links">
+      <li><a href="index.html"      class="nav-link">Home</a></li>
+      <li><a href="calculator.html" class="nav-link">Calculator</a></li>
+      <li><a href="converter.html"  class="nav-link">Converter</a></li>
+      <li><a href="currency.html"   class="nav-link">Currency</a></li>
+      <li><a href="age.html"        class="nav-link">Age</a></li>
+      <li><a href="qr.html"         class="nav-link">QR</a></li>
+      <li><a href="sip.html"        class="nav-link">SIP</a></li>
+      <li><a href="emi.html"        class="nav-link">EMI</a></li>
+      <li><a href="resize.html"     class="nav-link active">Resize</a></li>
+      <li><a href="document.html"   class="nav-link">Docs</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger">☰</button>
+  </div>
+  <div class="mobile-menu" id="nav-menu">
+    <a href="index.html"      class="nav-link">Home</a>
+    <a href="calculator.html" class="nav-link">Calculator</a>
+    <a href="converter.html"  class="nav-link">Converter</a>
+    <a href="currency.html"   class="nav-link">Currency</a>
+    <a href="age.html"        class="nav-link">Age</a>
+    <a href="qr.html"         class="nav-link">QR</a>
+    <a href="sip.html"        class="nav-link">SIP</a>
+    <a href="emi.html"        class="nav-link">EMI</a>
+    <a href="resize.html"     class="nav-link">Resize</a>
+    <a href="document.html"   class="nav-link">Docs</a>
+  </div>
+</nav>
+
+<div class="page-md">
+  <h1 class="page-title">Image Resizer</h1>
+  <p class="page-sub">Resize by percentage or exact pixels · Convert formats · 100% in your browser</p>
+
+  <!-- Upload -->
+  <div class="card">
+    <div class="section-label">Upload Image</div>
+    <div id="resize-dropzone"
+      style="border:2px dashed rgba(255,215,0,0.25);border-radius:14px;padding:36px 24px;
+             text-align:center;cursor:pointer;background:rgba(255,215,0,0.02);transition:all 0.2s;">
+      <div style="font-size:2.5rem;margin-bottom:10px;">🖼️</div>
+      <div style="font-size:1rem;font-weight:600;color:#ccc;margin-bottom:6px;">Drop your image here</div>
+      <div style="font-size:0.82rem;color:#555;">or click to browse · JPG, PNG, WebP, BMP, GIF</div>
+      <input type="file" id="resize-file-input" accept=".jpg,.jpeg,.png,.webp,.bmp,.gif" style="display:none;" />
+    </div>
+
+    <div id="resize-file-info"
+      style="display:none;align-items:center;gap:10px;padding:12px 16px;
+             background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;margin-top:12px;">
+      <span style="font-size:1.2rem;">📎</span>
+      <span id="resize-file-name" style="flex:1;font-size:.88rem;color:#ddd;word-break:break-all;"></span>
+      <span id="resize-orig-dims" style="font-size:.78rem;color:#888;white-space:nowrap;"></span>
+      <span id="resize-file-size" style="font-size:.78rem;color:#555;white-space:nowrap;"></span>
+      <button id="resize-file-remove" style="background:none;border:none;color:#555;cursor:pointer;font-size:1rem;padding:2px 6px;border-radius:4px;">✕</button>
+    </div>
+  </div>
+
+  <!-- Options (shown after file select) -->
+  <div class="card" id="resize-options-card" style="display:none;margin-top:16px;">
+    <div class="section-label">Resize Options</div>
+
+    <!-- Mode -->
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+      <button class="chip active" data-mode="percent" id="resize-mode-percent">📐 By Percentage</button>
+      <button class="chip"        data-mode="pixels"  id="resize-mode-pixels">📏 By Pixels</button>
+    </div>
+
+    <!-- Percentage mode -->
+    <div id="resize-percent-zone">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+        <button class="chip" data-pct="25">25%</button>
+        <button class="chip active" data-pct="50">50%</button>
+        <button class="chip" data-pct="75">75%</button>
+        <button class="chip" data-pct="100">100%</button>
+        <button class="chip" data-pct="150">150%</button>
+        <button class="chip" data-pct="200">200%</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <label style="white-space:nowrap;margin:0;font-size:.85rem;color:#888;min-width:70px;">Custom %</label>
+        <input type="number" id="resize-custom-pct" placeholder="e.g. 80" min="1" max="2000"
+          style="width:130px;" />
+      </div>
+    </div>
+
+    <!-- Pixels mode -->
+    <div id="resize-pixels-zone" style="display:none;">
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:end;margin-bottom:12px;">
+        <div>
+          <label for="resize-width">Width (px)</label>
+          <input type="number" id="resize-width" placeholder="Width" min="1" max="8000" />
+        </div>
+        <div style="padding-top:22px;text-align:center;color:#555;font-size:1.2rem;">×</div>
+        <div>
+          <label for="resize-height">Height (px)</label>
+          <input type="number" id="resize-height" placeholder="Height" min="1" max="8000" />
+        </div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.85rem;color:#888;margin:0;">
+        <input type="checkbox" id="resize-lock-ratio" checked
+          style="width:auto;border-radius:4px;padding:0;height:auto;" />
+        Lock aspect ratio
+      </label>
+    </div>
+
+    <!-- Output format -->
+    <div style="margin-top:20px;">
+      <div style="font-size:.78rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#FFD700;margin-bottom:10px;">Output Format</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;" id="resize-fmt-row">
+        <button class="chip active" data-fmt="same">Same as input</button>
+        <button class="chip" data-fmt="image/jpeg">JPG</button>
+        <button class="chip" data-fmt="image/png">PNG</button>
+        <button class="chip" data-fmt="image/webp">WebP</button>
+      </div>
+    </div>
+
+    <!-- JPG quality -->
+    <div id="resize-jpg-quality" style="display:none;margin-top:14px;">
+      <label for="resize-quality-slider">JPG Quality: <span id="resize-quality-val">85</span>%</label>
+      <input type="range" id="resize-quality-slider" min="10" max="100" value="85"
+        style="border:none;padding:8px 0;background:transparent;" />
+    </div>
+
+    <p class="error" id="resize-error" style="margin-top:14px;"></p>
+    <button class="btn btn-gold" id="resize-btn" style="margin-top:20px;">Resize Image</button>
+  </div>
+
+  <!-- Result preview -->
+  <div class="card" id="resize-preview-card" style="display:none;margin-top:16px;">
+    <div class="section-label" style="color:#4ade80;margin-bottom:16px;">✅ Resize Complete</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+      <div style="text-align:center;">
+        <div style="font-size:.7rem;color:#444;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Original</div>
+        <img id="resize-before-img"
+          style="max-width:100%;max-height:200px;border-radius:8px;border:1px solid rgba(255,255,255,.08);display:inline-block;" />
+        <div style="font-size:.75rem;color:#555;margin-top:6px;" id="resize-before-info"></div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:.7rem;color:#444;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Resized</div>
+        <img id="resize-after-img"
+          style="max-width:100%;max-height:200px;border-radius:8px;border:1px solid rgba(255,215,0,.25);display:inline-block;" />
+        <div style="font-size:.75rem;color:#aaa;margin-top:6px;" id="resize-after-info"></div>
+      </div>
+    </div>
+    <a id="resize-download-link" href="#" download style="display:block;text-decoration:none;">
+      <button class="btn btn-gold" style="width:100%;padding:13px 0;">⬇ Download Resized Image</button>
+    </a>
+    <button id="resize-another" class="btn btn-ghost" style="width:100%;margin-top:10px;">Resize Another Image</button>
+  </div>
+</div>
+
+<div class="seo-section">
+  <h2>About Image Resizer</h2>
+  <p>Resize any image instantly, entirely in your browser. No files are uploaded to any server. Supports JPG, PNG, WebP, BMP, and GIF. Convert between formats at the same time.</p>
+  <h2>How to Use</h2>
+  <p>Upload your image, choose resize by percentage or exact pixel dimensions, select an output format, and click Resize. A before/after preview will appear. Then download your resized image.</p>
+  <h2>Explore More Tools</h2>
+  <div class="tool-links">
+    <a href="document.html">Document Converter</a>
+    <a href="qr.html">QR Generator</a>
+    <a href="emi.html">EMI Calculator</a>
+    <a href="converter.html">Unit Converter</a>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
