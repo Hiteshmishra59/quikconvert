@@ -44,22 +44,15 @@
   <h1 class="page-title">Document Tools</h1>
   <p class="page-sub">Merge, rotate, compress, split and convert — all in your browser, no upload needed</p>
 
-  <!-- Conversion type chips — browser-side first -->
+  <!-- Conversion type chips — all run in the browser -->
   <div class="chip-row" id="doc-chip-row">
-    <button class="chip active" data-type="img-pdf">✅ Image → PDF</button>
-    <button class="chip"        data-type="pdf-img">✅ PDF → Image</button>
-    <button class="chip"        data-type="merge-pdf">✅ Merge PDF</button>
-    <button class="chip"        data-type="rotate-pdf">✅ Rotate PDF</button>
-    <button class="chip"        data-type="compress-pdf">✅ Compress PDF</button>
-    <button class="chip"        data-type="split-pdf">✅ Split PDF</button>
-    <button class="chip"        data-type="pdf-word">PDF → Word</button>
-    <button class="chip"        data-type="word-pdf">Word → PDF</button>
-    <button class="chip"        data-type="pdf-ppt">PDF → PPT</button>
-    <button class="chip"        data-type="ppt-pdf">PPT → PDF</button>
-    <button class="chip"        data-type="excel-pdf">Excel → PDF</button>
-    <button class="chip"        data-type="pdf-excel">PDF → Excel</button>
+    <button class="chip active" data-type="img-pdf">Image → PDF</button>
+    <button class="chip"        data-type="pdf-img">PDF → Image</button>
+    <button class="chip"        data-type="merge-pdf">Merge PDF</button>
+    <button class="chip"        data-type="rotate-pdf">Rotate PDF</button>
+    <button class="chip"        data-type="compress-pdf">Compress PDF</button>
+    <button class="chip"        data-type="split-pdf">Split PDF</button>
   </div>
-  <div style="font-size:.73rem;color:#3a3a3a;margin-bottom:20px;">✅ = runs fully in your browser · others need a server</div>
 
   <div class="card glow">
     <div class="section-label" id="doc-type-label">IMAGE TO PDF</div>
@@ -173,19 +166,6 @@
     <button class="btn btn-ghost" id="doc-convert-another2" style="margin-top:18px;">Convert Another File</button>
   </div>
 
-  <!-- Server-required notice -->
-  <div class="card" id="doc-unavailable" style="display:none;margin-top:20px;text-align:center;padding:36px 24px;">
-    <div style="font-size:2.5rem;margin-bottom:14px;">⚙️</div>
-    <div style="font-weight:700;color:#FFD700;font-size:1.05rem;margin-bottom:10px;">Server Processing Required</div>
-    <p style="color:#666;font-size:.88rem;line-height:1.7;max-width:400px;margin:0 auto 14px;">
-      <strong style="color:#aaa;" id="doc-unavail-type"></strong> requires server-side processing and is not available in this browser-only version.
-    </p>
-    <p style="color:#555;font-size:.8rem;margin-bottom:20px;">
-      ✅ These work right now in your browser:<br>
-      <strong style="color:#888;">Image→PDF &nbsp;·&nbsp; PDF→Image &nbsp;·&nbsp; Merge PDF &nbsp;·&nbsp; Rotate PDF &nbsp;·&nbsp; Compress PDF &nbsp;·&nbsp; Split PDF</strong>
-    </p>
-    <button class="btn btn-ghost" id="doc-unavailable-back">← Try a Different Tool</button>
-  </div>
 
   <!-- Format info -->
   <div class="doc-formats-grid" style="margin-top:36px;">
@@ -227,14 +207,16 @@
   <p>QuikConvert's document tools run directly in your browser — no uploads, no servers. Merge up to 20 PDFs and images, rotate PDF pages visually, compress PDF size, split pages, convert images to PDF, and extract PDF pages as PNG or JPG images.</p>
   <h2>How to Use</h2>
   <p>Select a tool from the chips above. ✅ tools run instantly in your browser. For Merge PDF, add up to 20 files (PDFs + images). For Rotate PDF, load the file to see a visual preview then choose rotation. For Compress, pick a quality level.</p>
-  <h2>Explore More Tools</h2>
+    <h2>Explore More Tools</h2>
   <div class="tool-links">
     <a href="calculator.html">Calculator</a>
     <a href="converter.html">Unit Converter</a>
-    <a href="resize.html">Image Resizer</a>
-    <a href="emi.html">EMI Calculator</a>
+    <a href="currency.html">Currency Converter</a>
+    <a href="age.html">Age Calculator</a>
     <a href="qr.html">QR Generator</a>
     <a href="sip.html">SIP Calculator</a>
+    <a href="emi.html">EMI Calculator</a>
+    <a href="resize.html">Image Resizer</a>
   </div>
 </div>
 
