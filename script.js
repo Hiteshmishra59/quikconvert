@@ -854,10 +854,6 @@
   var imgCount     = document.getElementById('doc-img-page-count');
   var imgFmtLabel  = document.getElementById('doc-img-format-label');
   var anotherBtn2  = document.getElementById('doc-convert-another2');
-  var unavailBox   = document.getElementById('doc-unavailable');
-  var unavailType  = document.getElementById('doc-unavail-type');
-  var unavailBack  = document.getElementById('doc-unavailable-back');
-
   var currentType  = 'img-pdf';
   var selectedFile = null;
   var mergeFiles   = [];
@@ -865,21 +861,13 @@
   var imgFormat    = 'png';
   var globalRot    = 0;
 
-  var BROWSER_SIDE = { 'img-pdf':1,'pdf-img':1,'merge-pdf':1,'rotate-pdf':1,'compress-pdf':1,'split-pdf':1 };
-
   var TYPE_CFG = {
-    'img-pdf':     { label:'IMAGE TO PDF',      accept:'.jpg,.jpeg,.png,.bmp,.tiff,.tif,.webp', icon:'🖼️', drop:'Drop your image here',   note:'Accepts: JPG, PNG, BMP, TIFF, WebP · Max 25 MB' },
-    'pdf-img':     { label:'PDF TO IMAGE',      accept:'.pdf',                                  icon:'📄', drop:'Drop your PDF here',     note:'Accepts: .pdf · Max 25 MB' },
-    'merge-pdf':   { label:'MERGE PDF',         accept:'.pdf,.jpg,.jpeg,.png,.webp,.bmp',        icon:'📄', drop:'',                       note:'Add PDFs and images below · Max 25 MB each' },
-    'rotate-pdf':  { label:'ROTATE PDF',        accept:'.pdf',                                  icon:'🔄', drop:'Drop your PDF here',     note:'Accepts: .pdf · Max 25 MB' },
-    'compress-pdf':{ label:'COMPRESS PDF',      accept:'.pdf',                                  icon:'🗜️', drop:'Drop your PDF here',     note:'Accepts: .pdf · Max 25 MB' },
-    'split-pdf':   { label:'SPLIT PDF',         accept:'.pdf',                                  icon:'✂️', drop:'Drop your PDF here',     note:'Accepts: .pdf · Max 25 MB' },
-    'pdf-word':    { label:'PDF → WORD',        accept:'.pdf',                                  icon:'📄', drop:'Drop your PDF here',     note:'Accepts: .pdf · Max 25 MB' },
-    'word-pdf':    { label:'WORD → PDF',        accept:'.doc,.docx',                            icon:'📝', drop:'Drop your Word file',    note:'Accepts: .doc, .docx · Max 25 MB' },
-    'pdf-ppt':     { label:'PDF → POWERPOINT',  accept:'.pdf',                                  icon:'📄', drop:'Drop your PDF here',     note:'Accepts: .pdf · Max 25 MB' },
-    'ppt-pdf':     { label:'PPT → PDF',         accept:'.ppt,.pptx',                            icon:'📑', drop:'Drop your PPT here',     note:'Accepts: .ppt, .pptx · Max 25 MB' },
-    'excel-pdf':   { label:'EXCEL → PDF',       accept:'.xls,.xlsx',                            icon:'📊', drop:'Drop your Excel file',   note:'Accepts: .xls, .xlsx · Max 25 MB' },
-    'pdf-excel':   { label:'PDF → EXCEL',       accept:'.pdf',                                  icon:'📄', drop:'Drop your PDF here',     note:'Accepts: .pdf · Max 25 MB' }
+    'img-pdf':     { label:'IMAGE TO PDF',  accept:'.jpg,.jpeg,.png,.bmp,.tiff,.tif,.webp', icon:'🖼️', drop:'Drop your image here',   note:'Accepts: JPG, PNG, BMP, TIFF, WebP · Max 25 MB' },
+    'pdf-img':     { label:'PDF TO IMAGE',  accept:'.pdf',                                  icon:'📄', drop:'Drop your PDF here',     note:'Accepts: .pdf · Max 25 MB' },
+    'merge-pdf':   { label:'MERGE PDF',     accept:'.pdf,.jpg,.jpeg,.png,.webp,.bmp',        icon:'📄', drop:'',                       note:'Add PDFs and images below · Max 25 MB each' },
+    'rotate-pdf':  { label:'ROTATE PDF',    accept:'.pdf',                                  icon:'🔄', drop:'Drop your PDF here',     note:'Accepts: .pdf · Max 25 MB' },
+    'compress-pdf':{ label:'COMPRESS PDF',  accept:'.pdf',                                  icon:'🗜️', drop:'Drop your PDF here',     note:'Accepts: .pdf · Max 25 MB' },
+    'split-pdf':   { label:'SPLIT PDF',     accept:'.pdf',                                  icon:'✂️', drop:'Drop your PDF here',     note:'Accepts: .pdf · Max 25 MB' }
   };
 
   function fmtBytes(b) {
@@ -917,7 +905,6 @@
   function hideAll() {
     resultCard  && (resultCard.style.display  = 'none');
     resultImgs  && (resultImgs.style.display  = 'none');
-    unavailBox  && (unavailBox.style.display  = 'none');
   }
   function resetBtn() {
     convertBtn.disabled    = false;
@@ -959,13 +946,6 @@
     resultImgs.style.display = 'block';
     resultImgs.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
-  function showUnavail(label) {
-    resetBtn(); hideAll();
-    if (unavailType) unavailType.textContent = '"' + label + '"';
-    unavailBox.style.display = 'block';
-    unavailBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-
   function applyType(type) {
     currentType = type;
     var cfg = TYPE_CFG[type];
@@ -1356,10 +1336,6 @@
     var cfg  = TYPE_CFG[currentType];
     var base = (selectedFile ? selectedFile.name : 'merged').replace(/\.[^.]+$/, '');
 
-    if (!BROWSER_SIDE[currentType]) {
-      setTimeout(function() { stopTicker(); showUnavail(cfg.label); }, 1600);
-      return;
-    }
     if (currentType === 'img-pdf') {
       setTimeout(function() { stopTicker(); imgToPdf(selectedFile, function(blob) { showSingle(blob, base + '.pdf', 'PDF Document'); }, onErr); }, 2000);
     } else if (currentType === 'pdf-img') {
@@ -1390,7 +1366,6 @@
   }
   anotherBtn  && anotherBtn.addEventListener('click',  resetAll);
   anotherBtn2 && anotherBtn2.addEventListener('click', resetAll);
-  unavailBack && unavailBack.addEventListener('click',  resetAll);
 
   applyType('img-pdf');
 })();
