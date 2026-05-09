@@ -854,6 +854,51 @@
   var imgCount     = document.getElementById('doc-img-page-count');
   var imgFmtLabel  = document.getElementById('doc-img-format-label');
   var anotherBtn2  = document.getElementById('doc-convert-another2');
+
+  /* ── External (Office) chip redirect ── */
+  var EXT_CFG = {
+    'word-pdf':  { icon:'📝', title:'Word → PDF',   ilovepdf:'https://www.ilovepdf.com/word_to_pdf',        smallpdf:'https://smallpdf.com/word-to-pdf' },
+    'pdf-word':  { icon:'📄', title:'PDF → Word',   ilovepdf:'https://www.ilovepdf.com/pdf_to_word',        smallpdf:'https://smallpdf.com/pdf-to-word' },
+    'excel-pdf': { icon:'📊', title:'Excel → PDF',  ilovepdf:'https://www.ilovepdf.com/excel_to_pdf',       smallpdf:'https://smallpdf.com/excel-to-pdf' },
+    'pdf-excel': { icon:'📄', title:'PDF → Excel',  ilovepdf:'https://www.ilovepdf.com/pdf_to_excel',       smallpdf:'https://smallpdf.com/pdf-to-excel' },
+    'ppt-pdf':   { icon:'📑', title:'PPT → PDF',    ilovepdf:'https://www.ilovepdf.com/powerpoint_to_pdf',  smallpdf:'https://smallpdf.com/powerpoint-to-pdf' },
+    'pdf-ppt':   { icon:'📄', title:'PDF → PPT',    ilovepdf:'https://www.ilovepdf.com/pdf_to_powerpoint',  smallpdf:'https://smallpdf.com/pdf-to-ppt' }
+  };
+  var extCard  = document.getElementById('doc-ext-card');
+  var extIcon  = document.getElementById('doc-ext-icon');
+  var extTitle = document.getElementById('doc-ext-title');
+  var extLink1 = document.getElementById('doc-ext-link1');
+  var extLink2 = document.getElementById('doc-ext-link2');
+  var extBack  = document.getElementById('doc-ext-back');
+  var extRow   = document.getElementById('doc-chip-row-ext');
+
+  if (extRow) {
+    extRow.querySelectorAll('.chip[data-ext]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var key = btn.dataset.ext;
+        var cfg = EXT_CFG[key];
+        if (!cfg) return;
+        extRow.querySelectorAll('.chip').forEach(function(b){ b.classList.remove('active'); });
+        document.getElementById('doc-chip-row').querySelectorAll('.chip').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        extIcon.textContent  = cfg.icon;
+        extTitle.textContent = cfg.title;
+        extLink1.href = cfg.ilovepdf;
+        extLink2.href = cfg.smallpdf;
+        if (extCard) extCard.style.display = 'block';
+        document.querySelector('.card.glow') && (document.querySelector('.card.glow').style.display = 'none');
+        extCard.scrollIntoView({ behavior:'smooth', block:'nearest' });
+      });
+    });
+  }
+  extBack && extBack.addEventListener('click', function() {
+    if (extCard) extCard.style.display = 'none';
+    document.querySelector('.card.glow') && (document.querySelector('.card.glow').style.display = 'block');
+    extRow && extRow.querySelectorAll('.chip').forEach(function(b){ b.classList.remove('active'); });
+    document.getElementById('doc-chip-row').querySelectorAll('.chip').forEach(function(b){ b.classList.remove('active'); });
+    document.querySelector('#doc-chip-row .chip[data-type="img-pdf"]') && document.querySelector('#doc-chip-row .chip[data-type="img-pdf"]').classList.add('active');
+  });
+
   var currentType  = 'img-pdf';
   var selectedFile = null;
   var mergeFiles   = [];
