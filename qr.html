@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>QR Code Generator — QuikConvert</title>
-  <meta name="description" content="Generate QR codes for any text, URL or message instantly. Free QR code generator with multiple size options and PNG download.">
+  <meta name="description" content="Generate QR codes for any text, URL or message instantly. Free QR code generator with multiple size options, batch mode and PNG download.">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -18,8 +18,10 @@
       <li><a href="converter.html"  class="nav-link">Converter</a></li>
       <li><a href="currency.html"   class="nav-link">Currency</a></li>
       <li><a href="age.html"        class="nav-link">Age</a></li>
-      <li><a href="qr.html"         class="nav-link">QR</a></li>
+      <li><a href="qr.html"         class="nav-link active">QR</a></li>
       <li><a href="sip.html"        class="nav-link">SIP</a></li>
+      <li><a href="emi.html"        class="nav-link">EMI</a></li>
+      <li><a href="resize.html"     class="nav-link">Resize</a></li>
       <li><a href="document.html"   class="nav-link">Docs</a></li>
     </ul>
     <button class="hamburger" id="hamburger">☰</button>
@@ -32,15 +34,24 @@
     <a href="age.html"        class="nav-link">Age</a>
     <a href="qr.html"         class="nav-link">QR</a>
     <a href="sip.html"        class="nav-link">SIP</a>
+    <a href="emi.html"        class="nav-link">EMI</a>
+    <a href="resize.html"     class="nav-link">Resize</a>
     <a href="document.html"   class="nav-link">Docs</a>
   </div>
 </nav>
 
 <div class="page-sm">
   <h1 class="page-title">QR Generator</h1>
-  <p class="page-sub">Generate QR codes for any text or URL instantly</p>
+  <p class="page-sub">Generate QR codes for any text or URL — single or batch mode</p>
 
-  <div class="card">
+  <!-- Mode toggle -->
+  <div style="display:flex;gap:8px;margin-bottom:24px;">
+    <button id="qr-tab-single" style="padding:8px 22px;border-radius:10px;font-size:.88rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.15);color:#FFD700;">Single</button>
+    <button id="qr-tab-batch"  style="padding:8px 22px;border-radius:10px;font-size:.88rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:#888;">Batch</button>
+  </div>
+
+  <!-- ── Single Mode ── -->
+  <div id="qr-single-card" class="card">
     <label for="qr-text">Text or URL</label>
     <textarea id="qr-text" rows="3"
               placeholder="Enter URL or any text…"
@@ -69,26 +80,52 @@
     </div>
   </div>
 
-  <p class="footer-note">Powered by QR Server API · Free &amp; unlimited</p>
+  <!-- ── Batch Mode ── -->
+  <div id="qr-batch-card" class="card" style="display:none;">
+    <div class="section-label">Batch QR Generator</div>
+    <p style="font-size:.84rem;color:#666;margin-bottom:14px;">Enter one URL or text per line (max 20 items). Each will become its own QR code.</p>
+
+    <label for="qr-batch-text">Items (one per line)</label>
+    <textarea id="qr-batch-text" rows="8"
+              placeholder="https://example.com&#10;https://github.com&#10;My Product Name&#10;tel:+1234567890"
+              style="margin-bottom:16px;font-size:.85rem;"></textarea>
+
+    <label>QR Size</label>
+    <div class="qr-size-row" id="qr-batch-size-row">
+      <button class="qr-size-btn" data-size="128">128 px</button>
+      <button class="qr-size-btn active" data-size="200">200 px</button>
+      <button class="qr-size-btn" data-size="300">300 px</button>
+    </div>
+
+    <p class="error" id="qr-batch-error"></p>
+    <button class="btn btn-gold" id="qr-batch-btn">Generate All QR Codes</button>
+
+    <div id="qr-batch-results" style="display:none;margin-top:28px;">
+      <div class="section-label" id="qr-batch-count" style="margin-bottom:16px;"></div>
+      <div id="qr-batch-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px;"></div>
+    </div>
+  </div>
+
+  <p class="footer-note" style="margin-top:20px;">Powered by QR Server API · Free &amp; unlimited</p>
 </div>
 
 <!-- SEO CONTENT -->
 <div class="seo-section">
   <h2>About QR Code Generator</h2>
-  <p>Our free QR code generator creates scannable QR codes from any text, URL, phone number, or message in seconds. Choose from four size options (128px to 512px) and download the QR code as a PNG image to use anywhere.</p>
+  <p>Our free QR code generator creates scannable QR codes from any text, URL, phone number, or message in seconds. Choose from four size options (128 px to 512 px) and download the QR code as a PNG image to use anywhere. Use batch mode to generate up to 20 QR codes at once.</p>
 
   <h2>How to Use</h2>
-  <p>Type or paste your text or URL in the input field, select your preferred QR code size, and click <strong>Generate QR Code</strong>. Once generated, you can download the PNG file or copy the direct image URL to use in your projects.</p>
+  <p>Type or paste your text or URL in the input field, select your preferred QR code size, and click <strong>Generate QR Code</strong>. Once generated, you can download the PNG file or copy the direct image URL. Switch to <strong>Batch Mode</strong> to generate multiple QR codes at once from a list of URLs or texts.</p>
 
   <h2>Why Use This QR Generator</h2>
-  <p>No signup, no watermark, and completely free. This tool is perfect for creating QR codes for business cards, product packaging, social media links, event check-ins, and more. The generated QR codes are high-quality and readable by all major QR scanner apps.</p>
+  <p>No signup, no watermark, and completely free. This tool is perfect for creating QR codes for business cards, product packaging, social media links, event check-ins, and more. The batch mode makes it ideal for marketing campaigns and bulk QR generation.</p>
 
   <h2>Explore More Tools</h2>
   <div class="tool-links">
     <a href="calculator.html">Calculator</a>
     <a href="converter.html">Unit Converter</a>
     <a href="currency.html">Currency Converter</a>
-    <a href="document.html">Document Converter</a>
+    <a href="document.html">Document Tools</a>
   </div>
 </div>
 
