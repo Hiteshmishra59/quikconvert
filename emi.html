@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EMI Calculator — QuikConvert</title>
+  <meta name="description" content="Calculate EMI for home loans, car loans and personal loans. Get monthly instalment, total interest and full amortization schedule instantly.">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="logo">⚡ QuikConvert</a>
+    <ul class="nav-links">
+      <li><a href="index.html"      class="nav-link">Home</a></li>
+      <li><a href="calculator.html" class="nav-link">Calculator</a></li>
+      <li><a href="converter.html"  class="nav-link">Converter</a></li>
+      <li><a href="currency.html"   class="nav-link">Currency</a></li>
+      <li><a href="age.html"        class="nav-link">Age</a></li>
+      <li><a href="qr.html"         class="nav-link">QR</a></li>
+      <li><a href="sip.html"        class="nav-link">SIP</a></li>
+      <li><a href="emi.html"        class="nav-link active">EMI</a></li>
+      <li><a href="resize.html"     class="nav-link">Resize</a></li>
+      <li><a href="document.html"   class="nav-link">Docs</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger">☰</button>
+  </div>
+  <div class="mobile-menu" id="nav-menu">
+    <a href="index.html"      class="nav-link">Home</a>
+    <a href="calculator.html" class="nav-link">Calculator</a>
+    <a href="converter.html"  class="nav-link">Converter</a>
+    <a href="currency.html"   class="nav-link">Currency</a>
+    <a href="age.html"        class="nav-link">Age</a>
+    <a href="qr.html"         class="nav-link">QR</a>
+    <a href="sip.html"        class="nav-link">SIP</a>
+    <a href="emi.html"        class="nav-link">EMI</a>
+    <a href="resize.html"     class="nav-link">Resize</a>
+    <a href="document.html"   class="nav-link">Docs</a>
+  </div>
+</nav>
+
+<div class="page-md">
+  <h1 class="page-title">EMI Calculator</h1>
+  <p class="page-sub">Equated Monthly Instalment — calculate loan payments, interest and amortization schedule</p>
+
+  <div class="grid-2">
+
+    <!-- Input card -->
+    <div class="card glow">
+      <div class="section-label">Loan Details</div>
+
+      <label for="emi-amount">Loan Amount (₹)</label>
+      <div style="position:relative;margin-bottom:16px;">
+        <span class="input-prefix">₹</span>
+        <input type="number" id="emi-amount" placeholder="e.g. 500000" min="1000"
+               class="has-prefix" />
+      </div>
+
+      <label for="emi-rate">Annual Interest Rate (%)</label>
+      <div style="position:relative;margin-bottom:16px;">
+        <input type="number" id="emi-rate" placeholder="e.g. 8.5" min="0.1" max="50" step="0.1"
+               class="has-suffix" />
+        <span class="input-suffix">%</span>
+      </div>
+
+      <label for="emi-tenure">Loan Tenure</label>
+      <div style="display:flex;gap:8px;margin-bottom:22px;">
+        <div style="position:relative;flex:1;">
+          <input type="number" id="emi-tenure" placeholder="e.g. 5" min="1" max="360"
+                 class="has-suffix" />
+          <span class="input-suffix" id="emi-tenure-suffix">yrs</span>
+        </div>
+        <div style="display:flex;border:1px solid rgba(255,255,255,.1);border-radius:10px;overflow:hidden;flex-shrink:0;">
+          <button id="emi-unit-yr"
+            style="background:rgba(255,215,0,.15);color:#FFD700;border:none;padding:0 14px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit;">Years</button>
+          <button id="emi-unit-mo"
+            style="background:transparent;color:#888;border:none;padding:0 14px;font-size:.82rem;cursor:pointer;font-family:inherit;">Months</button>
+        </div>
+      </div>
+
+      <p class="error" id="emi-error"></p>
+      <button class="btn btn-gold" id="emi-calc-btn">Calculate EMI</button>
+    </div>
+
+    <!-- Result card -->
+    <div class="card" id="emi-result-card">
+      <div class="section-label">Results</div>
+
+      <div id="emi-placeholder" style="text-align:center;padding:40px 20px;color:#444;">
+        <div style="font-size:2.5rem;margin-bottom:12px;">💳</div>
+        <div style="font-size:.9rem;">Enter your loan details<br>and click Calculate</div>
+      </div>
+
+      <div id="emi-result-box" style="display:none;" class="fade-in">
+        <div class="result-box" style="text-align:center;margin-bottom:16px;">
+          <div class="result-label">Monthly EMI</div>
+          <div class="result-value" id="emi-monthly"></div>
+          <div class="result-sub"  id="emi-note"></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+          <div class="sip-stat">
+            <div class="sip-stat-label">Principal Amount</div>
+            <div class="sip-stat-val" id="emi-principal"></div>
+          </div>
+          <div class="sip-stat">
+            <div class="sip-stat-label">Total Interest</div>
+            <div class="sip-stat-val" style="color:#FFA500;" id="emi-interest"></div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <div style="display:flex;justify-content:space-between;font-size:.74rem;color:#666;margin-bottom:5px;">
+            <span id="emi-bar-principal-pct">Principal (0%)</span>
+            <span id="emi-bar-interest-pct" style="color:#FFA500;">Interest (0%)</span>
+          </div>
+          <div class="sip-bar-track">
+            <div class="sip-bar-invested" id="emi-bar-principal"></div>
+            <div class="sip-bar-returns" style="background:rgba(255,165,0,0.5);" id="emi-bar-interest"></div>
+          </div>
+        </div>
+
+        <div style="text-align:center;padding:12px;background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.1);border-radius:12px;margin-bottom:14px;">
+          <div style="font-size:.75rem;color:#666;margin-bottom:4px;">Total Amount Payable</div>
+          <div style="font-size:1.5rem;font-weight:800;color:#FFD700;letter-spacing:-1px;" id="emi-total"></div>
+        </div>
+
+        <button id="emi-show-table" class="btn btn-ghost" style="width:100%;font-size:.85rem;">
+          Show Amortization Schedule ▾
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Amortization table -->
+  <div id="emi-table-wrap" style="display:none;margin-top:16px;" class="fade-in">
+    <div class="card">
+      <div class="section-label">Month-by-Month Amortization</div>
+      <div style="overflow-x:auto;">
+        <table id="emi-table"
+          style="width:100%;border-collapse:collapse;font-size:.82rem;min-width:480px;">
+          <thead>
+            <tr style="color:#666;border-bottom:1px solid rgba(255,255,255,.1);">
+              <th style="padding:9px 10px;text-align:left;font-weight:600;">Month</th>
+              <th style="padding:9px 10px;text-align:right;font-weight:600;">EMI (₹)</th>
+              <th style="padding:9px 10px;text-align:right;font-weight:600;">Principal (₹)</th>
+              <th style="padding:9px 10px;text-align:right;font-weight:600;">Interest (₹)</th>
+              <th style="padding:9px 10px;text-align:right;font-weight:600;">Balance (₹)</th>
+            </tr>
+          </thead>
+          <tbody id="emi-table-body" style="color:#aaa;"></tbody>
+        </table>
+      </div>
+      <p style="font-size:.75rem;color:#444;margin-top:12px;text-align:center;" id="emi-table-note"></p>
+    </div>
+  </div>
+
+  <div style="margin-top:24px;padding:12px 18px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:12px;font-size:.78rem;color:#555;line-height:1.7;">
+    <strong style="color:#666;">Formula:</strong>
+    EMI = [P × r × (1+r)ⁿ] / [(1+r)ⁿ − 1] &nbsp;·&nbsp;
+    P = Loan Amount &nbsp;·&nbsp; r = Monthly Interest Rate (annual ÷ 12) &nbsp;·&nbsp; n = Tenure in Months
+  </div>
+</div>
+
+<div class="seo-section">
+  <h2>About EMI Calculator</h2>
+  <p>Calculate your Equated Monthly Instalment (EMI) for home loans, car loans, personal loans, or education loans. Enter the loan amount, annual interest rate, and tenure to instantly see your monthly payment, total interest, and a full amortization schedule.</p>
+  <h2>How to Use</h2>
+  <p>Enter the loan amount (₹), the annual interest rate (%), and the tenure in years or months. Click <strong>Calculate EMI</strong> to see your monthly payment, total interest payable, and the split between principal and interest. Click "Show Amortization Schedule" for a month-by-month breakdown.</p>
+  <h2>Explore More Tools</h2>
+  <div class="tool-links">
+    <a href="sip.html">SIP Calculator</a>
+    <a href="calculator.html">Calculator</a>
+    <a href="currency.html">Currency Converter</a>
+    <a href="document.html">Document Converter</a>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
