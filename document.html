@@ -57,36 +57,15 @@
     <button class="chip"        data-type="split-pdf">✂ Split PDF</button>
   </div>
   <div style="margin-bottom:8px;margin-top:4px;">
-    <span style="font-size:.7rem;color:#3a3a3a;text-transform:uppercase;letter-spacing:.05em;">Office conversions (opens free online tool)</span>
+    <span style="font-size:.7rem;color:#3a3a3a;text-transform:uppercase;letter-spacing:.05em;">Office conversions (server · LibreOffice)</span>
   </div>
   <div class="chip-row" id="doc-chip-row-ext" style="margin-bottom:20px;">
-    <button class="chip" data-ext="word-pdf">📝 Word → PDF</button>
-    <button class="chip" data-ext="pdf-word">📄 PDF → Word</button>
-    <button class="chip" data-ext="excel-pdf">📊 Excel → PDF</button>
-    <button class="chip" data-ext="pdf-excel">📄 PDF → Excel</button>
-    <button class="chip" data-ext="ppt-pdf">📑 PPT → PDF</button>
-    <button class="chip" data-ext="pdf-ppt">📄 PDF → PPT</button>
-  </div>
-
-  <!-- External redirect card (shown when Office chip is clicked) -->
-  <div id="doc-ext-card" class="card" style="display:none;margin-bottom:24px;text-align:center;padding:28px 24px;">
-    <div style="font-size:2rem;margin-bottom:10px;" id="doc-ext-icon">📝</div>
-    <div style="font-weight:700;color:#FFD700;font-size:1rem;margin-bottom:8px;" id="doc-ext-title">Word → PDF</div>
-    <p style="color:#666;font-size:.85rem;line-height:1.6;max-width:420px;margin:0 auto 18px;">
-      This conversion requires a server-side engine (LibreOffice / MS Office) and cannot run in the browser.<br>
-      Use one of these <strong style="color:#aaa;">free online tools</strong> — they're fast, no signup needed:
-    </p>
-    <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:18px;">
-      <a id="doc-ext-link1" href="#" target="_blank" rel="noopener"
-         class="btn btn-gold" style="width:auto;padding:9px 20px;font-size:.85rem;text-decoration:none;">
-        Open on ILovePDF →
-      </a>
-      <a id="doc-ext-link2" href="#" target="_blank" rel="noopener"
-         class="btn btn-ghost" style="padding:9px 20px;font-size:.85rem;text-decoration:none;">
-        Open on Smallpdf →
-      </a>
-    </div>
-    <button id="doc-ext-back" style="background:none;border:none;color:#555;font-size:.82rem;cursor:pointer;">← Back to browser tools</button>
+    <button class="chip" data-type="word-pdf">📝 Word → PDF</button>
+    <button class="chip" data-type="pdf-word">📄 PDF → Word</button>
+    <button class="chip" data-type="excel-pdf">📊 Excel → PDF</button>
+    <button class="chip" data-type="pdf-excel">📄 PDF → Excel</button>
+    <button class="chip" data-type="ppt-pdf">📑 PPT → PDF</button>
+    <button class="chip" data-type="pdf-ppt">📄 PDF → PPT</button>
   </div>
 
   <div class="card glow">
