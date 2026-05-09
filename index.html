@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Free Online Tools — Calculator, Converter, Currency &amp; More | QuikConvert</title>
-  <meta name="description" content="QuikConvert offers free online tools including calculator, unit converter, currency converter, age calculator, QR generator, SIP calculator, and document converter. Fast, accurate and easy to use.">
+  <meta name="description" content="QuikConvert offers free online tools: calculator, unit converter, currency converter, age calculator, QR generator, SIP calculator, EMI calculator, image resizer, and document converter. Fast, accurate and free.">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -13,13 +13,15 @@
   <div class="navbar-inner">
     <a href="index.html" class="logo">⚡ QuikConvert</a>
     <ul class="nav-links">
-      <li><a href="index.html"      class="nav-link">Home</a></li>
+      <li><a href="index.html"      class="nav-link active">Home</a></li>
       <li><a href="calculator.html" class="nav-link">Calculator</a></li>
       <li><a href="converter.html"  class="nav-link">Converter</a></li>
       <li><a href="currency.html"   class="nav-link">Currency</a></li>
       <li><a href="age.html"        class="nav-link">Age</a></li>
       <li><a href="qr.html"         class="nav-link">QR</a></li>
       <li><a href="sip.html"        class="nav-link">SIP</a></li>
+      <li><a href="emi.html"        class="nav-link">EMI</a></li>
+      <li><a href="resize.html"     class="nav-link">Resize</a></li>
       <li><a href="document.html"   class="nav-link">Docs</a></li>
     </ul>
     <button class="hamburger" id="hamburger">☰</button>
@@ -32,38 +34,24 @@
     <a href="age.html"        class="nav-link">Age</a>
     <a href="qr.html"         class="nav-link">QR</a>
     <a href="sip.html"        class="nav-link">SIP</a>
+    <a href="emi.html"        class="nav-link">EMI</a>
+    <a href="resize.html"     class="nav-link">Resize</a>
     <a href="document.html"   class="nav-link">Docs</a>
   </div>
 </nav>
 
 <div class="page">
-  <div class="hero fade-in">
-    <div class="badge">All-in-one toolkit</div>
-    <h1 class="hero-title">
-      <span class="gold-text">Quik</span><span style="color:#fff">Convert</span>
-    </h1>
-    <p class="hero-sub">
-      A premium multi-tool suite for everyday calculations, conversions, and
-      utilities — fast, accurate, and beautifully designed.
-    </p>
-    <a href="converter.html">
-      <button class="btn btn-gold" style="width:auto;padding:14px 36px;font-size:1rem;">
-        Start Converting →
-      </button>
-    </a>
-  </div>
-
-  <div class="divider"></div>
-
   <!-- CTA ROW -->
-  <div class="cta-row">
-    <a href="converter.html"  class="cta-btn">⚖️ Start Converting Units</a>
-    <a href="currency.html"   class="cta-btn">💱 Convert Currency</a>
-    <a href="calculator.html" class="cta-btn">🧮 Open Calculator</a>
-    <a href="age.html"        class="cta-btn">🎂 Calculate Age</a>
-    <a href="qr.html"         class="cta-btn">📱 QR Generator</a>
-    <a href="sip.html"        class="cta-btn">📈 SIP Calculator</a>
-    <a href="document.html"   class="cta-btn">📄 Convert Documents</a>
+  <div class="cta-row" style="margin-top:0;padding-top:36px;">
+    <a href="converter.html"  class="cta-btn">⚖️ Unit Converter</a>
+    <a href="currency.html"   class="cta-btn">💱 Currency</a>
+    <a href="calculator.html" class="cta-btn">🧮 Calculator</a>
+    <a href="age.html"        class="cta-btn">🎂 Age</a>
+    <a href="qr.html"         class="cta-btn">📱 QR Codes</a>
+    <a href="sip.html"        class="cta-btn">📈 SIP</a>
+    <a href="emi.html"        class="cta-btn">💳 EMI</a>
+    <a href="resize.html"     class="cta-btn">🖼️ Resize</a>
+    <a href="document.html"   class="cta-btn">📄 Documents</a>
   </div>
 
   <div class="divider"></div>
@@ -73,48 +61,60 @@
     <a href="calculator.html" class="tool-card fade-in" style="animation-delay:.05s">
       <div class="tool-icon">🧮</div>
       <div class="tool-name">Calculator</div>
-      <div class="tool-desc">Full-featured scientific &amp; basic calculator</div>
+      <div class="tool-desc">Full-featured scientific &amp; basic calculator with expression support</div>
       <div class="tool-link">Open tool →</div>
     </a>
     <a href="converter.html" class="tool-card fade-in" style="animation-delay:.10s">
       <div class="tool-icon">⚖️</div>
       <div class="tool-name">Unit Converter</div>
-      <div class="tool-desc">20+ categories: length, weight, temperature and more</div>
+      <div class="tool-desc">20+ categories: length, weight, temperature, volume and more</div>
       <div class="tool-link">Open tool →</div>
     </a>
     <a href="currency.html" class="tool-card fade-in" style="animation-delay:.15s">
       <div class="tool-icon">💱</div>
       <div class="tool-name">Currency</div>
-      <div class="tool-desc">Real-time exchange rates for 150+ currencies</div>
+      <div class="tool-desc">Real-time exchange rates for 150+ currencies worldwide</div>
       <div class="tool-link">Open tool →</div>
     </a>
     <a href="age.html" class="tool-card fade-in" style="animation-delay:.20s">
       <div class="tool-icon">🎂</div>
       <div class="tool-name">Age Calculator</div>
-      <div class="tool-desc">Exact age in years, months and days</div>
+      <div class="tool-desc">Exact age in years, months and days with next birthday countdown</div>
       <div class="tool-link">Open tool →</div>
     </a>
     <a href="qr.html" class="tool-card fade-in" style="animation-delay:.25s">
       <div class="tool-icon">📱</div>
       <div class="tool-name">QR Generator</div>
-      <div class="tool-desc">Instant QR codes for any text or URL</div>
+      <div class="tool-desc">Instant QR codes for any text, URL or data · batch mode</div>
       <div class="tool-link">Open tool →</div>
     </a>
     <a href="sip.html" class="tool-card fade-in" style="animation-delay:.30s">
       <div class="tool-icon">📈</div>
       <div class="tool-name">SIP Calculator</div>
-      <div class="tool-desc">Calculate mutual fund SIP returns &amp; maturity value</div>
+      <div class="tool-desc">Calculate mutual fund SIP returns &amp; maturity value up to 150 years</div>
       <div class="tool-link">Open tool →</div>
     </a>
-    <a href="document.html" class="tool-card fade-in" style="animation-delay:.35s">
+    <a href="emi.html" class="tool-card fade-in" style="animation-delay:.35s">
+      <div class="tool-icon">💳</div>
+      <div class="tool-name">EMI Calculator</div>
+      <div class="tool-desc">Calculate loan EMI, total interest and full amortization schedule</div>
+      <div class="tool-link">Open tool →</div>
+    </a>
+    <a href="resize.html" class="tool-card fade-in" style="animation-delay:.40s">
+      <div class="tool-icon">🖼️</div>
+      <div class="tool-name">Image Resizer</div>
+      <div class="tool-desc">Resize images by pixel or percentage · Convert PNG, JPG, WebP</div>
+      <div class="tool-link">Open tool →</div>
+    </a>
+    <a href="document.html" class="tool-card fade-in" style="animation-delay:.45s">
       <div class="tool-icon">📄</div>
-      <div class="tool-name">Document Converter</div>
-      <div class="tool-desc">PDF to Word, Word to PDF, Image to PDF &amp; more</div>
+      <div class="tool-name">Document Tools</div>
+      <div class="tool-desc">Merge, rotate, compress, split PDF · Image to PDF &amp; more</div>
       <div class="tool-link">Open tool →</div>
     </a>
   </div>
 
-  <p style="text-align:center;margin-top:60px;color:#333;font-size:.8rem;">
+  <p style="text-align:center;margin-top:60px;color:#2a2a2a;font-size:.8rem;">
     Built with precision · No ads · No tracking
   </p>
 </div>
