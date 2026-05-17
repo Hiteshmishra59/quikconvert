@@ -11,7 +11,9 @@
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"></noscript>
   <link rel="stylesheet" href="style.css" />
   <!-- ⚙️ SET YOUR BACKEND URL HERE (remove trailing slash) -->
-  <script>window.CONVERT_API_URL = 'https://YOUR-BACKEND-URL.com';</script>
+  <!-- ⚠️ IMPORTANT: Replace the URL below with your deployed backend URL -->
+  <!-- Example: https://quikconvert-backend.onrender.com                  -->
+  <script>window.CONVERT_API_URL = 'https://quikconvert-backend.onrender.com';</script>
 </head>
 <body>
 
@@ -76,7 +78,7 @@
 
   <div class="card glow">
     <div class="section-label" id="doc-type-label">IMAGE TO PDF</div>
-    <p style="font-size:.78rem;color:#aaa;margin-bottom:18px;" id="doc-accept-note">Accepts: JPG, PNG, BMP, TIFF, WebP · Max 25 MB</p>
+    <p style="font-size:.78rem;color:#aaa;margin-bottom:18px;" id="doc-accept-note">Accepts: JPG, PNG, BMP, TIFF, WebP · Max 100 MB</p>
 
     <!-- Single-file dropzone (most tools) -->
     <div id="doc-single-zone">
