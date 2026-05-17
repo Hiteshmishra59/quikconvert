@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Image Resizer — QuikConvert</title>
   <meta name="description" content="Resize images online for free. Change dimensions or percentage, convert format (PNG, JPG, WebP). Fast, browser-based — no upload needed.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"></noscript>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -40,7 +44,7 @@
   </div>
 </nav>
 
-<div class="page-md">
+<main class="page-md">
   <h1 class="page-title">Image Resizer</h1>
   <p class="page-sub">Resize by percentage or exact pixels · Convert formats · 100% in your browser</p>
 
@@ -52,7 +56,7 @@
              text-align:center;cursor:pointer;background:rgba(255,215,0,0.02);transition:all 0.2s;">
       <div style="font-size:2.5rem;margin-bottom:10px;">🖼️</div>
       <div style="font-size:1rem;font-weight:600;color:#ccc;margin-bottom:6px;">Drop your image here</div>
-      <div style="font-size:0.82rem;color:#555;">or click to browse · JPG, PNG, WebP, BMP, GIF</div>
+      <div style="font-size:0.82rem;color:#aaa;">or click to browse · JPG, PNG, WebP, BMP, GIF</div>
       <input type="file" id="resize-file-input" accept=".jpg,.jpeg,.png,.webp,.bmp,.gif" style="display:none;" />
     </div>
 
@@ -62,8 +66,8 @@
       <span style="font-size:1.2rem;">📎</span>
       <span id="resize-file-name" style="flex:1;font-size:.88rem;color:#ddd;word-break:break-all;"></span>
       <span id="resize-orig-dims" style="font-size:.78rem;color:#888;white-space:nowrap;"></span>
-      <span id="resize-file-size" style="font-size:.78rem;color:#555;white-space:nowrap;"></span>
-      <button id="resize-file-remove" style="background:none;border:none;color:#555;cursor:pointer;font-size:1rem;padding:2px 6px;border-radius:4px;">✕</button>
+      <span id="resize-file-size" style="font-size:.78rem;color:#aaa;white-space:nowrap;"></span>
+      <button id="resize-file-remove" style="background:none;border:none;color:#aaa;cursor:pointer;font-size:1rem;padding:2px 6px;border-radius:4px;">✕</button>
     </div>
   </div>
 
@@ -101,7 +105,7 @@
           <label for="resize-width">Width (px)</label>
           <input type="number" id="resize-width" placeholder="Width" min="1" max="8000" />
         </div>
-        <div style="padding-top:22px;text-align:center;color:#555;font-size:1.2rem;">×</div>
+        <div style="padding-top:22px;text-align:center;color:#aaa;font-size:1.2rem;">×</div>
         <div>
           <label for="resize-height">Height (px)</label>
           <input type="number" id="resize-height" placeholder="Height" min="1" max="8000" />
@@ -144,7 +148,7 @@
         <div style="font-size:.7rem;color:#444;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Original</div>
         <img id="resize-before-img"
           style="max-width:100%;max-height:200px;border-radius:8px;border:1px solid rgba(255,255,255,.08);display:inline-block;" />
-        <div style="font-size:.75rem;color:#555;margin-top:6px;" id="resize-before-info"></div>
+        <div style="font-size:.75rem;color:#aaa;margin-top:6px;" id="resize-before-info"></div>
       </div>
       <div style="text-align:center;">
         <div style="font-size:.7rem;color:#444;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Resized</div>
@@ -176,7 +180,7 @@
     <a href="emi.html">EMI Calculator</a>
     <a href="document.html">Document Tools</a>
   </div>
-</div>
+</main>
 
 <script src="script.js"></script>
 </body>
