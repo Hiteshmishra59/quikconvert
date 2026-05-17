@@ -503,3 +503,38 @@ input.has-suffix  { padding-right: 42px !important; }
 .doc-format-icon { font-size: 1.8rem; margin-bottom: 8px; }
 .doc-format-name { font-size: 0.9rem; font-weight: 600; color: #f0f0f0; margin-bottom: 4px; }
 .doc-format-desc { font-size: 0.75rem; color: #aaa; line-height: 1.5; }
+
+/* ── Large-number overflow prevention ──────────────────────── */
+#currency-result,
+#currency-result strong,
+#sip-maturity,
+#sip-returns,
+#sip-avg-monthly,
+#sip-wealth-gain {
+  overflow-wrap: anywhere;
+  word-break: break-all;
+  font-size: clamp(.85rem, 2vw, 1.6rem) !important;
+}
+
+/* General card overflow guard */
+.card, .result-card, .tool-card {
+  overflow-x: hidden;
+}
+.card strong, .result-card strong {
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+/* SIP maturity value specifically */
+#sip-maturity {
+  font-size: clamp(1rem, 3vw, 2rem) !important;
+  line-height: 1.3;
+}
+
+/* EMI and other result number cells */
+[id*="-emi-"], [id*="result"], [id*="-total-"] {
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
