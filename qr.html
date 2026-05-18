@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon-192.png">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
 
@@ -29,6 +30,7 @@
       <li><a href="emi.html"        class="nav-link">EMI</a></li>
       <li><a href="resize.html"     class="nav-link">Resize</a></li>
       <li><a href="document.html"   class="nav-link">Docs</a></li>
+    <li><a href="bulkpdf.html" class="nav-link">Bulk PDF</a></li>
     </ul>
     <button class="hamburger" id="hamburger">☰</button>
   </div>
@@ -109,6 +111,9 @@
     <div id="qr-batch-results" style="display:none;margin-top:28px;">
       <div class="section-label" id="qr-batch-count" style="margin-bottom:16px;"></div>
       <div id="qr-batch-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px;"></div>
+      <div style="margin-top:18px;text-align:center;">
+        <button id="qr-batch-zip" class="btn btn-gold" style="display:none;padding:12px 28px;font-size:.95rem;">⬇ Download All as ZIP</button>
+      </div>
     </div>
   </div>
 
