@@ -80,12 +80,12 @@
       <div class="info-box" style="margin-bottom:12px;">
         In your Word / LibreOffice document, type placeholders like <code>{{Change 1st}}</code>, <code>{{Change 2nd}}</code>, <code>{{Change 3rd}}</code>, <code>{{Change 4th}}</code>, <code>{{Change 5th}}</code> where the data should appear. Use <strong>plain, unformatted text</strong> for placeholders (no bold/color on the <code>{{ }}</code> braces). Save as PDF and upload here.
       </div>
-      <div class="drop-zone" id="pdf-drop">
+      <label for="pdf-input" class="drop-zone" id="pdf-drop">
         <div class="dz-icon">📄</div>
         <div class="dz-title">Drop PDF template here</div>
         <div class="dz-sub">or click to browse · .pdf files only</div>
-      </div>
-      <input type="file" id="pdf-input" accept=".pdf" style="display:none;">
+      </label>
+      <input type="file" id="pdf-input" accept=".pdf" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;">
       <div id="pdf-pill" style="display:none;"></div>
       <div id="pdf-ph-row" style="margin-top:10px;display:none;">
         <span style="font-size:.77rem;color:#777;">Detected placeholders: </span>
@@ -101,12 +101,12 @@
     <div class="step-content">
       <div class="step-title">Upload Excel / CSV Data</div>
       <p style="font-size:.82rem;color:#888;margin-bottom:10px;">First row = column headers (must match placeholder names). Each subsequent row generates one PDF.</p>
-      <div class="drop-zone" id="excel-drop">
+      <label for="excel-input" class="drop-zone" id="excel-drop">
         <div class="dz-icon">📊</div>
         <div class="dz-title">Drop Excel or CSV here</div>
         <div class="dz-sub">or click to browse · .xlsx, .xls, .csv</div>
-      </div>
-      <input type="file" id="excel-input" accept=".xlsx,.xls,.csv" style="display:none;">
+      </label>
+      <input type="file" id="excel-input" accept=".xlsx,.xls,.csv" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;">
       <div id="excel-pill" style="display:none;"></div>
       <p id="excel-info" style="font-size:.82rem;color:#888;margin-top:8px;display:none;"></p>
       <p id="excel-error" class="error" style="margin-top:8px;"></p>
@@ -428,7 +428,6 @@ endstream', dataStart);
   }
 
   /* ── PDF drop ── */
-  pdfDrop.addEventListener('click', function(){ pdfInput.click(); });
   pdfDrop.addEventListener('dragover', function(e){ e.preventDefault(); pdfDrop.classList.add('drag-over'); });
   pdfDrop.addEventListener('dragleave', function(){ pdfDrop.classList.remove('drag-over'); });
   pdfDrop.addEventListener('drop', function(e){ e.preventDefault(); pdfDrop.classList.remove('drag-over'); if(e.dataTransfer.files[0]) handlePdf(e.dataTransfer.files[0]); });
@@ -454,7 +453,6 @@ endstream', dataStart);
   }
 
   /* ── Excel drop ── */
-  excelDrop.addEventListener('click', function(){ excelInput.click(); });
   excelDrop.addEventListener('dragover', function(e){ e.preventDefault(); excelDrop.classList.add('drag-over'); });
   excelDrop.addEventListener('dragleave', function(){ excelDrop.classList.remove('drag-over'); });
   excelDrop.addEventListener('drop', function(e){ e.preventDefault(); excelDrop.classList.remove('drag-over'); if(e.dataTransfer.files[0]) handleExcel(e.dataTransfer.files[0]); });
