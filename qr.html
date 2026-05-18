@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>QR Code Generator — QuikConvert</title>
-  <meta name="description" content="Generate QR codes for any text, URL or message instantly. Free QR code generator with multiple size options, batch mode and PNG download.">
+  <meta name="description" content="Generate QR codes for any text, URL or message instantly. Free QR code generator with multiple size options, multiple mode and PNG download.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
@@ -48,12 +48,12 @@
 
 <main class="page-sm">
   <h1 class="page-title">QR Generator</h1>
-  <p class="page-sub">Generate QR codes for any text or URL — single or batch mode</p>
+  <p class="page-sub">Generate QR codes for any text or URL — single or multiple mode</p>
 
   <!-- Mode toggle -->
   <div style="display:flex;gap:8px;margin-bottom:24px;">
     <button id="qr-tab-single" style="padding:8px 22px;border-radius:10px;font-size:.88rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.15);color:#FFD700;">Single</button>
-    <button id="qr-tab-batch"  style="padding:8px 22px;border-radius:10px;font-size:.88rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:#888;">Batch</button>
+    <button id="qr-tab-batch"  style="padding:8px 22px;border-radius:10px;font-size:.88rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:transparent;color:#888;">Multiple</button>
   </div>
 
   <!-- ── Single Mode ── -->
@@ -88,8 +88,8 @@
 
   <!-- ── Batch Mode ── -->
   <div id="qr-batch-card" class="card" style="display:none;">
-    <div class="section-label">Batch QR Generator</div>
-    <p style="font-size:.84rem;color:#666;margin-bottom:14px;">Enter one URL or text per line (max 20 items). Each will become its own QR code.</p>
+    <div class="section-label">Multiple QR Generator</div>
+    <p style="font-size:.84rem;color:#666;margin-bottom:14px;">Enter one URL or text per line (max 50 items). Each will become its own QR code.</p>
 
     <label for="qr-batch-text">Items (one per line)</label>
     <textarea id="qr-batch-text" rows="8"
@@ -112,19 +112,19 @@
     </div>
   </div>
 
-  <p class="footer-note" style="margin-top:20px;">Powered by QR Server API · Free &amp; unlimited</p>
+  <p class="footer-note" style="margin-top:20px;"></p>
 </div>
 
 <!-- SEO CONTENT -->
 <div class="seo-section">
   <h2>About QR Code Generator</h2>
-  <p>Our free QR code generator creates scannable QR codes from any text, URL, phone number, or message in seconds. Choose from four size options (128 px to 512 px) and download the QR code as a PNG image to use anywhere. Use batch mode to generate up to 20 QR codes at once.</p>
+  <p>Our free QR code generator creates scannable QR codes from any text, URL, phone number, or message in seconds. Choose from four size options (128 px to 512 px) and download the QR code as a PNG image to use anywhere. Use multiple mode to generate up to 20 QR codes at once.</p>
 
   <h2>How to Use</h2>
   <p>Type or paste your text or URL in the input field, select your preferred QR code size, and click <strong>Generate QR Code</strong>. Once generated, you can download the PNG file or copy the direct image URL. Switch to <strong>Batch Mode</strong> to generate multiple QR codes at once from a list of URLs or texts.</p>
 
   <h2>Why Use This QR Generator</h2>
-  <p>No signup, no watermark, and completely free. This tool is perfect for creating QR codes for business cards, product packaging, social media links, event check-ins, and more. The batch mode makes it ideal for marketing campaigns and bulk QR generation.</p>
+  <p>No signup, no watermark, and completely free. This tool is perfect for creating QR codes for business cards, product packaging, social media links, event check-ins, and more. The multiple mode makes it ideal for marketing campaigns and bulk QR generation.</p>
 
     <h2>Explore More Tools</h2>
   <div class="tool-links">
@@ -136,6 +136,7 @@
     <a href="emi.html">EMI Calculator</a>
     <a href="resize.html">Image Resizer</a>
     <a href="document.html">Document Tools</a>
+    <a href="bulkpdf.html">Bulk PDF Generator</a>
   </div>
 </main>
 
