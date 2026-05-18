@@ -52,7 +52,7 @@
 
 <main class="page-md">
   <h1 class="page-title">Document Tools</h1>
-  <p class="page-sub">PDF tools run fully in your browser · Office conversions open a free online service</p>
+  <p class="page-sub">Browser PDF tools run instantly · Smart conversions use LibreOffice (no account needed)</p>
 
   <!-- Conversion type chips -->
   <div style="margin-bottom:8px;">
@@ -61,13 +61,13 @@
   <div class="chip-row" id="doc-chip-row" style="margin-bottom:10px;">
     <button class="chip active" data-type="img-pdf">🖼 Image → PDF</button>
     <button class="chip"        data-type="pdf-img">📄 PDF → Image</button>
-    <button class="chip"        data-type="merge-pdf">📎 Merge PDF</button>
+    <button class="chip"        data-type="merge-pdf">📎 Merge Documents</button>
     <button class="chip"        data-type="rotate-pdf">🔄 Rotate PDF</button>
-    <button class="chip"        data-type="compress-pdf">🗜 Compress PDF</button>
+    <button class="chip"        data-type="compress-pdf">🗜 Compress Documents</button>
     <button class="chip"        data-type="split-pdf">✂ Split PDF</button>
   </div>
   <div style="margin-bottom:8px;margin-top:4px;">
-    <span style="font-size:.7rem;color:#aaa;text-transform:uppercase;letter-spacing:.05em;">Office conversions (server · LibreOffice)</span>
+    <span style="font-size:.7rem;color:#aaa;text-transform:uppercase;letter-spacing:.05em;">Smart Conversions</span>
   </div>
   <div class="chip-row" id="doc-chip-row-ext" style="margin-bottom:20px;">
     <button class="chip" data-type="word-pdf">📝 Word → PDF</button>
@@ -98,7 +98,7 @@
       </div>
     </div>
 
-    <!-- MERGE PDF — multi-file zone (up to 20 files: PDFs + images) -->
+    <!-- MERGE DOCUMENTS — multi-file zone (up to 20 files: PDFs + images) -->
     <div id="doc-merge-zone" style="display:none;">
       <div id="doc-merge-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
       <button class="btn btn-ghost" id="doc-merge-add"
@@ -117,7 +117,7 @@
       <p style="color:#aaa;font-size:.78rem;margin-top:4px;">Each page saves as a separate PNG image</p>
     </div>
 
-    <!-- COMPRESS PDF — quality selector -->
+    <!-- COMPRESS DOCUMENTS — quality selector -->
     <div id="doc-compress-opts" style="display:none;margin-top:14px;">
       <div style="font-size:.78rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#FFD700;margin-bottom:10px;">Compression Level</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -241,6 +241,7 @@
     <a href="sip.html">SIP Calculator</a>
     <a href="emi.html">EMI Calculator</a>
     <a href="resize.html">Image Resizer</a>
+    <a href="bulkpdf.html">Bulk PDF Generator</a>
   </div>
 </main>
 
