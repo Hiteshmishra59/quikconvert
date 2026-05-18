@@ -4,54 +4,47 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Bulk PDF Generator — QuikConvert</title>
-  <meta name="description" content="Generate hundreds of personalized PDFs from Excel data. Upload a template with {{placeholders}}, upload your Excel file, and download all PDFs instantly.">
+  <meta name="description" content="Generate hundreds of personalized PDFs from Excel data. Upload a PDF template with {{placeholders}}, upload Excel, and download all PDFs instantly — runs entirely in your browser.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"></noscript>
   <link rel="stylesheet" href="style.css"/>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <!-- CDN Libraries -->
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <style>
     .step-badge{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--gold);color:#000;font-weight:700;font-size:.85rem;flex-shrink:0;}
-    .step-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:24px;}
-    .step-content{flex:1;}
+    .step-row{display:flex;align-items:flex-start;gap:14px;margin-bottom:24px;}
+    .step-content{flex:1;min-width:0;}
     .step-title{font-weight:700;color:var(--gold);font-size:.95rem;margin-bottom:8px;}
-    .drop-zone{border:2px dashed rgba(255,215,0,.3);border-radius:12px;padding:32px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:rgba(255,215,0,.03);}
+    .drop-zone{border:2px dashed rgba(255,215,0,.3);border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:rgba(255,215,0,.03);}
     .drop-zone:hover,.drop-zone.drag-over{border-color:var(--gold);background:rgba(255,215,0,.07);}
-    .drop-zone .dz-icon{font-size:2.2rem;margin-bottom:8px;}
-    .drop-zone .dz-title{font-size:1rem;font-weight:600;color:#ccc;margin-bottom:4px;}
-    .drop-zone .dz-sub{font-size:.8rem;color:#555;}
+    .drop-zone .dz-icon{font-size:2rem;margin-bottom:6px;}
+    .drop-zone .dz-title{font-size:.95rem;font-weight:600;color:#ccc;margin-bottom:3px;}
+    .drop-zone .dz-sub{font-size:.78rem;color:#555;}
     .file-pill{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:10px 14px;margin-top:10px;}
-    .file-pill-name{flex:1;font-size:.88rem;color:#ddd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .file-pill-size{font-size:.78rem;color:#666;}
-    .file-pill-remove{cursor:pointer;color:#666;font-size:1.1rem;line-height:1;}
-    .file-pill-remove:hover{color:#ff4444;}
+    .file-pill-name{flex:1;font-size:.86rem;color:#ddd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .file-pill-size{font-size:.76rem;color:#666;white-space:nowrap;}
+    .file-pill-remove{cursor:pointer;color:#555;font-size:1.1rem;}
+    .file-pill-remove:hover{color:#ff5555;}
     .mapping-table{width:100%;border-collapse:collapse;}
-    .mapping-table th{text-align:left;font-size:.75rem;font-weight:600;color:#888;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.08);}
-    .mapping-table td{padding:8px;border-bottom:1px solid rgba(255,255,255,.05);}
-    .mapping-table td:first-child{font-size:.85rem;color:#ccc;font-weight:500;}
+    .mapping-table th{text-align:left;font-size:.74rem;font-weight:600;color:#777;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.08);}
+    .mapping-table td{padding:8px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
+    .mapping-table td:first-child{font-size:.85rem;color:#ddd;font-weight:500;}
     .mapping-table select{width:100%;background:#1a1a1a;border:1px solid rgba(255,255,255,.12);color:#ddd;border-radius:6px;padding:6px 8px;font-size:.82rem;font-family:inherit;}
-    .mapping-table input[type=text]{width:100%;background:#1a1a1a;border:1px solid rgba(255,255,255,.12);color:#ddd;border-radius:6px;padding:6px 8px;font-size:.82rem;font-family:inherit;box-sizing:border-box;}
-    .progress-bar-wrap{background:rgba(255,255,255,.07);border-radius:999px;height:10px;overflow:hidden;margin:12px 0;}
-    .progress-bar-fill{height:100%;background:var(--gold);border-radius:999px;transition:width .3s;}
-    .result-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:16px;}
+    .ph-chip{display:inline-block;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.25);border-radius:4px;padding:2px 8px;font-size:.75rem;color:var(--gold);font-family:monospace;}
+    .progress-wrap{background:rgba(255,255,255,.07);border-radius:999px;height:10px;overflow:hidden;margin:10px 0;}
+    .progress-fill{height:100%;background:var(--gold);border-radius:999px;transition:width .25s;}
+    .result-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:16px;}
     .result-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:14px;text-align:center;}
-    .result-card .rc-icon{font-size:2rem;margin-bottom:6px;}
-    .result-card .rc-name{font-size:.8rem;color:#bbb;margin-bottom:10px;word-break:break-all;}
-    .result-card .btn-dl{display:block;background:var(--gold);color:#000;border-radius:6px;padding:7px 0;font-size:.78rem;font-weight:700;text-decoration:none;cursor:pointer;}
-    .result-card .btn-dl:hover{background:#e6c200;}
-    .template-tabs{display:flex;gap:8px;margin-bottom:14px;}
-    .template-tab{padding:6px 16px;border-radius:20px;font-size:.82rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.12);background:transparent;color:#888;transition:all .2s;}
-    .template-tab.active{background:var(--gold);color:#000;border-color:var(--gold);}
-    .placeholder-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
-    .placeholder-chip{background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.3);border-radius:4px;padding:3px 8px;font-size:.75rem;color:var(--gold);font-family:monospace;}
-    .info-box{background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.2);border-radius:8px;padding:12px 14px;font-size:.82rem;color:#ccc;line-height:1.5;}
-    .naming-preview{font-size:.8rem;color:#888;margin-top:6px;font-family:monospace;}
-    @media(max-width:600px){.result-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
+    .result-card .rc-icon{font-size:1.8rem;margin-bottom:5px;}
+    .result-card .rc-name{font-size:.78rem;color:#aaa;margin-bottom:10px;word-break:break-all;line-height:1.3;}
+    .result-card .rc-dl{display:block;background:var(--gold);color:#000;border-radius:6px;padding:7px 0;font-size:.78rem;font-weight:700;text-decoration:none;cursor:pointer;}
+    .result-card .rc-dl:hover{background:#e6c200;}
+    .info-box{background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.18);border-radius:8px;padding:12px 14px;font-size:.82rem;color:#bbb;line-height:1.6;}
+    code{color:var(--gold);font-family:monospace;font-size:.88em;}
+    .naming-hint{font-size:.76rem;color:#666;margin-top:5px;font-family:monospace;}
   </style>
 </head>
 <body>
@@ -74,38 +67,39 @@
   </ul>
 </nav>
 
-<main class="container" style="max-width:820px;">
+<main style="max-width:840px;margin:0 auto;padding:24px 20px 60px;">
   <h1 class="page-title">Bulk PDF Generator</h1>
-  <p class="page-sub">Generate personalized PDFs from Excel data · runs entirely in your browser · no uploads</p>
+  <p class="page-sub">Generate personalized PDFs from Excel data · runs entirely in your browser · no uploads needed</p>
 
-  <!-- STEP 1: Template -->
+  <!-- STEP 1: PDF Template -->
   <div class="step-row">
     <div class="step-badge">1</div>
     <div class="step-content">
       <div class="step-title">Upload PDF Template</div>
       <div class="info-box" style="margin-bottom:12px;">
-        Create your PDF template in Word / LibreOffice / Google Docs with <code style="color:var(--gold);">{{ColumnName}}</code> placeholders where you want data to appear, then save/export as PDF. Examples: <code style="color:var(--gold);">{{Name}}</code>, <code style="color:var(--gold);">{{School}}</code>, <code style="color:var(--gold);">{{Serial}}</code>
+        In your Word / LibreOffice document, type placeholders like <code>{{Change 1st}}</code>, <code>{{Change 2nd}}</code>, <code>{{Change 3rd}}</code>, <code>{{Change 4th}}</code>, <code>{{Change 5th}}</code> where the data should appear. Use <strong>plain, unformatted text</strong> for placeholders (no bold/color on the <code>{{ }}</code> braces). Save as PDF and upload here.
       </div>
       <div class="drop-zone" id="pdf-drop">
         <div class="dz-icon">📄</div>
         <div class="dz-title">Drop PDF template here</div>
-        <div class="dz-sub">or click to browse · .pdf files</div>
+        <div class="dz-sub">or click to browse · .pdf files only</div>
         <input type="file" id="pdf-input" accept=".pdf" style="display:none;">
       </div>
       <div id="pdf-pill" style="display:none;"></div>
-      <div id="pdf-placeholders" style="margin-top:10px;display:none;">
-        <span style="font-size:.78rem;color:#888;">Detected placeholders: </span>
-        <div class="placeholder-chips" id="ph-chips"></div>
+      <div id="pdf-ph-row" style="margin-top:10px;display:none;">
+        <span style="font-size:.77rem;color:#777;">Detected placeholders: </span>
+        <span id="pdf-ph-chips"></span>
       </div>
       <p id="pdf-error" class="error" style="margin-top:8px;"></p>
     </div>
   </div>
 
-  <!-- STEP 2: Excel -->
+  <!-- STEP 2: Excel Data -->
   <div class="step-row">
     <div class="step-badge">2</div>
     <div class="step-content">
       <div class="step-title">Upload Excel / CSV Data</div>
+      <p style="font-size:.82rem;color:#888;margin-bottom:10px;">First row = column headers (must match placeholder names). Each subsequent row generates one PDF.</p>
       <div class="drop-zone" id="excel-drop">
         <div class="dz-icon">📊</div>
         <div class="dz-title">Drop Excel or CSV here</div>
@@ -113,9 +107,7 @@
         <input type="file" id="excel-input" accept=".xlsx,.xls,.csv" style="display:none;">
       </div>
       <div id="excel-pill" style="display:none;"></div>
-      <div id="excel-info" style="margin-top:8px;display:none;">
-        <span id="excel-rows-text" style="font-size:.82rem;color:#888;"></span>
-      </div>
+      <p id="excel-info" style="font-size:.82rem;color:#888;margin-top:8px;display:none;"></p>
       <p id="excel-error" class="error" style="margin-top:8px;"></p>
     </div>
   </div>
@@ -123,51 +115,48 @@
   <!-- STEP 3: Mapping -->
   <div class="card" id="mapping-card" style="display:none;">
     <div class="section-label">Field Mapping</div>
-    <p style="font-size:.82rem;color:#888;margin-bottom:14px;">Map each Excel column to a PDF placeholder. Placeholders detected from your PDF are shown below.</p>
+    <p style="font-size:.82rem;color:#888;margin-bottom:14px;">Map each PDF placeholder to an Excel column. Matching names are auto-selected.</p>
     <table class="mapping-table">
-      <thead><tr><th>PDF Placeholder</th><th>Excel Column</th></tr></thead>
+      <thead><tr><th>PDF Placeholder</th><th>Excel Column to Use</th></tr></thead>
       <tbody id="mapping-body"></tbody>
     </table>
-
-    <div style="margin-top:20px;">
-      <label style="font-size:.82rem;color:#888;display:block;margin-bottom:6px;">File Naming Pattern</label>
-      <input type="text" id="naming-pattern" placeholder="e.g. {{Name}}_{{School}} or leave blank for Row_1, Row_2…"
-             style="width:100%;background:#1a1a1a;border:1px solid rgba(255,255,255,.12);color:#ddd;border-radius:8px;padding:9px 12px;font-size:.85rem;font-family:inherit;box-sizing:border-box;">
-      <div class="naming-preview" id="naming-preview"></div>
+    <div style="margin-top:18px;">
+      <label style="font-size:.82rem;color:#888;display:block;margin-bottom:5px;">Output File Naming Pattern <span style="color:#555;">(optional)</span></label>
+      <input type="text" id="naming-pattern" placeholder="e.g. {{Name}}_{{Serial}} → leave blank for Row_1, Row_2…"
+             style="width:100%;background:#1a1a1a;border:1px solid rgba(255,255,255,.12);color:#ddd;border-radius:8px;padding:9px 12px;font-size:.84rem;font-family:inherit;box-sizing:border-box;">
+      <div class="naming-hint" id="naming-preview"></div>
     </div>
   </div>
 
   <!-- STEP 4: Generate -->
   <div class="card" id="generate-card" style="display:none;">
     <div class="section-label">Generate PDFs</div>
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
-      <span id="generate-summary" style="font-size:.88rem;color:#888;"></span>
-    </div>
-    <button class="btn btn-gold" id="generate-btn" style="width:100%;padding:14px;font-size:1rem;">⚡ Generate All PDFs</button>
-
-    <div id="progress-section" style="display:none;margin-top:16px;">
+    <p id="gen-summary" style="font-size:.88rem;color:#888;margin-bottom:14px;"></p>
+    <button class="btn btn-gold" id="gen-btn" style="width:100%;padding:14px;font-size:1rem;font-weight:700;">⚡ Generate All PDFs</button>
+    <div id="progress-section" style="display:none;margin-top:14px;">
       <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-        <span style="font-size:.82rem;color:#888;">Generating…</span>
-        <span id="progress-text" style="font-size:.82rem;color:var(--gold);">0 / 0</span>
+        <span style="font-size:.8rem;color:#888;">Processing…</span>
+        <span id="progress-text" style="font-size:.8rem;color:var(--gold);">0 / 0</span>
       </div>
-      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+      <div class="progress-wrap"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
     </div>
     <p id="gen-error" class="error" style="margin-top:8px;"></p>
   </div>
 
   <!-- STEP 5: Results -->
   <div class="card" id="results-card" style="display:none;">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
-      <div class="section-label" style="margin:0;">✅ Generation Complete</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+      <div class="section-label" style="margin:0;">✅ Done — <span id="results-count"></span></div>
       <button class="btn btn-gold" id="zip-btn" style="padding:10px 22px;font-size:.88rem;">⬇ Download All as ZIP</button>
     </div>
+    <p id="zip-error" class="error"></p>
     <div id="result-grid" class="result-grid"></div>
   </div>
 
-  <!-- SEO / Info -->
+  <!-- SEO -->
   <div class="seo-section">
     <h2>About Bulk PDF Generator</h2>
-    <p>Generate hundreds of personalized PDFs from a single template and Excel data. Perfect for certificates, allotment letters, invoices, event badges, and any document where you need unique values for each recipient. The tool works entirely in your browser — no data is sent to any server.</p>
+    <p>Generate hundreds of personalized PDFs from a single template and an Excel spreadsheet. Perfect for certificates, allotment letters, invoices, event badges, appointment letters, and any document needing unique per-recipient values. Everything runs in your browser — your files never leave your device.</p>
     <h2>Explore More Tools</h2>
     <div class="tool-links">
       <a href="calculator.html">Calculator</a>
@@ -188,326 +177,387 @@
 (function(){
   'use strict';
 
-  // ── State ──
-  var pdfBytes = null;          // Uint8Array of template PDF
-  var pdfPlaceholders = [];     // ['Name', 'School', ...]
-  var excelData = [];           // array of row objects
-  var excelHeaders = [];        // column header strings
-  var generatedBlobs = [];      // {name, blob} for results
+  /* ── State ── */
+  var pdfBytes = null;
+  var pdfPlaceholders = [];
+  var excelData = [];
+  var excelHeaders = [];
+  var generatedBlobs = [];
 
-  // ── Elements ──
-  var pdfDrop    = document.getElementById('pdf-drop');
-  var pdfInput   = document.getElementById('pdf-input');
-  var pdfPill    = document.getElementById('pdf-pill');
-  var pdfPhs     = document.getElementById('pdf-placeholders');
-  var phChips    = document.getElementById('ph-chips');
-  var pdfError   = document.getElementById('pdf-error');
+  /* ── DOM refs ── */
+  function $id(id){ return document.getElementById(id); }
+  var pdfDrop=$id('pdf-drop'), pdfInput=$id('pdf-input'), pdfPill=$id('pdf-pill'),
+      pdfPhRow=$id('pdf-ph-row'), pdfPhChips=$id('pdf-ph-chips'), pdfError=$id('pdf-error'),
+      excelDrop=$id('excel-drop'), excelInput=$id('excel-input'), excelPill=$id('excel-pill'),
+      excelInfo=$id('excel-info'), excelError=$id('excel-error'),
+      mappingCard=$id('mapping-card'), mappingBody=$id('mapping-body'),
+      namingPat=$id('naming-pattern'), namingPreview=$id('naming-preview'),
+      generateCard=$id('generate-card'), genSummary=$id('gen-summary'),
+      genBtn=$id('gen-btn'), progressSec=$id('progress-section'),
+      progressText=$id('progress-text'), progressFill=$id('progress-fill'),
+      genError=$id('gen-error'),
+      resultsCard=$id('results-card'), resultsCount=$id('results-count'),
+      resultGrid=$id('result-grid'), zipBtn=$id('zip-btn'), zipError=$id('zip-error');
 
-  var excelDrop  = document.getElementById('excel-drop');
-  var excelInput = document.getElementById('excel-input');
-  var excelPill  = document.getElementById('excel-pill');
-  var excelInfo  = document.getElementById('excel-info');
-  var excelRowsT = document.getElementById('excel-rows-text');
-  var excelError = document.getElementById('excel-error');
-
-  var mappingCard   = document.getElementById('mapping-card');
-  var mappingBody   = document.getElementById('mapping-body');
-  var namingPattern = document.getElementById('naming-pattern');
-  var namingPreview = document.getElementById('naming-preview');
-
-  var generateCard  = document.getElementById('generate-card');
-  var generateSummary= document.getElementById('generate-summary');
-  var generateBtn   = document.getElementById('generate-btn');
-  var progressSec   = document.getElementById('progress-section');
-  var progressText  = document.getElementById('progress-text');
-  var progressFill  = document.getElementById('progress-fill');
-  var genError      = document.getElementById('gen-error');
-
-  var resultsCard   = document.getElementById('results-card');
-  var resultGrid    = document.getElementById('result-grid');
-  var zipBtn        = document.getElementById('zip-btn');
-
-  // ── Helpers ──
+  /* ── Utilities ── */
   function fmtSize(b){ return b>1048576?(b/1048576).toFixed(1)+' MB':(b/1024).toFixed(0)+' KB'; }
 
   function makePill(container, name, size, onRemove){
     container.style.display='block';
-    container.innerHTML='<div class="file-pill">'+
-      '<span style="font-size:1.1rem;">📄</span>'+
-      '<span class="file-pill-name">'+name+'</span>'+
-      '<span class="file-pill-size">'+fmtSize(size)+'</span>'+
-      '<span class="file-pill-remove" title="Remove">✕</span>'+
-      '</div>';
+    container.innerHTML='<div class="file-pill"><span style="font-size:1.1rem">📄</span><span class="file-pill-name">'+name+'</span><span class="file-pill-size">'+fmtSize(size)+'</span><span class="file-pill-remove" title="Remove">✕</span></div>';
     container.querySelector('.file-pill-remove').addEventListener('click', onRemove);
   }
 
-  // Find {{Placeholder}} patterns in raw PDF text
+  /* ── Placeholder extraction from raw PDF bytes ── */
   function extractPlaceholders(bytes){
     var text = '';
-    // Convert bytes to latin1 string for regex search
-    var chunk = bytes.slice(0, Math.min(bytes.length, 500000));
-    for(var i=0;i<chunk.length;i++) text += String.fromCharCode(chunk[i]);
-    var matches = text.match(/\{\{([^}]+)\}\}/g) || [];
-    var seen = {};
-    var result = [];
-    matches.forEach(function(m){
-      var key = m.slice(2,-2).trim();
-      if(!seen[key]){ seen[key]=true; result.push(key); }
-    });
-    return result;
+    var len = Math.min(bytes.length, 600000);
+    for(var i=0;i<len;i++) text += String.fromCharCode(bytes[i]);
+    var seen={}, out=[];
+    var re = /\{\{([^{}]+)\}\}/g, m;
+    while((m=re.exec(text))!==null){
+      var key = m[1].trim();
+      if(!seen[key]){ seen[key]=true; out.push(key); }
+    }
+    return out;
   }
 
-  // Replace {{Field}} in PDF bytes (works for text-based PDFs)
-  function replacePlaceholders(bytes, mapping){
-    // Convert to Uint8Array clone
-    var arr = new Uint8Array(bytes);
-    var text = '';
-    for(var i=0;i<arr.length;i++) text += String.fromCharCode(arr[i]);
+  /* ── Async: decompress a FlateDecode stream chunk ── */
+  async function decompressRaw(data){
+    try{
+      var ds = new DecompressionStream('deflate-raw');
+      var w = ds.writable.getWriter(), r = ds.readable.getReader();
+      w.write(data); w.close();
+      var chunks=[], total=0;
+      while(true){ var x=await r.read(); if(x.done)break; chunks.push(x.value); total+=x.value.length; }
+      var out=new Uint8Array(total), off=0;
+      for(var i=0;i<chunks.length;i++){ out.set(chunks[i],off); off+=chunks[i].length; }
+      return out;
+    }catch(e){ return null; }
+  }
 
-    Object.keys(mapping).forEach(function(field){
-      var value = String(mapping[field]||'');
-      var placeholder = '{{'+field+'}}';
-      // Escape special PDF string chars in value
-      var safeVal = value.replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)');
-      // Replace all occurrences
-      while(text.indexOf(placeholder) >= 0){
-        text = text.split(placeholder).join(safeVal);
+  async function compressRaw(data){
+    try{
+      var cs = new CompressionStream('deflate-raw');
+      var w = cs.writable.getWriter(), r = cs.readable.getReader();
+      w.write(data); w.close();
+      var chunks=[], total=0;
+      while(true){ var x=await r.read(); if(x.done)break; chunks.push(x.value); total+=x.value.length; }
+      var out=new Uint8Array(total), off=0;
+      for(var i=0;i<chunks.length;i++){ out.set(chunks[i],off); off+=chunks[i].length; }
+      return out;
+    }catch(e){ return null; }
+  }
+
+  /* ── Core: replace {{Placeholder}} in PDF bytes ── */
+  async function replacePlaceholdersAsync(bytes, mapping){
+    // Build latin1 string
+    function toStr(arr){ var s=''; for(var i=0;i<arr.length;i++) s+=String.fromCharCode(arr[i]); return s; }
+    function toBytes(str){ var a=new Uint8Array(str.length); for(var i=0;i<str.length;i++) a[i]=str.charCodeAt(i)&0xff; return a; }
+    function safeVal(v){ return String(v).replace(/\/g,'\\').replace(/\(/g,'\(').replace(/\)/g,'\)'); }
+    function doReplace(str){
+      var modified=false;
+      Object.keys(mapping).forEach(function(field){
+        var ph='{{'+field+'}}', val=safeVal(mapping[field]);
+        if(str.indexOf(ph)>=0){ str=str.split(ph).join(val); modified=true; }
+      });
+      return {str:str, modified:modified};
+    }
+
+    var pdfStr = toStr(bytes);
+
+    /* Pass 1: try simple string replacement (works for uncompressed streams) */
+    var r1 = doReplace(pdfStr);
+    if(r1.modified) return { bytes: toBytes(r1.str), method: 'direct' };
+
+    /* Pass 2: decompress FlateDecode streams and replace inside them */
+    // Find all stream...endstream blocks
+    var result = pdfStr;
+    var anyMod = false;
+    var sRe = /stream
+?
+/g;
+    var eRe = /
+?
+endstream/g;
+    // Process sequentially: find each stream start, get the preceding dict, check for FlateDecode
+    var pos = 0;
+    var segments = []; // {start, headerEnd, dataStart, dataEnd, isFlate, lengthPos, lengthVal}
+    while(pos < pdfStr.length){
+      var si = pdfStr.indexOf('
+stream', pos);
+      if(si < 0) break;
+      var dataStart = si + 8; // after '
+stream
+' (8 chars with 
+)
+      if(pdfStr[si+7]==='
+') dataStart = si + 9; // CRLF
+      var ei = pdfStr.indexOf('
+endstream', dataStart);
+      if(ei < 0) break;
+      // Look backwards for << >> dict
+      var dictEnd = pdfStr.lastIndexOf('>>', si);
+      var dictStart = dictEnd > 0 ? pdfStr.lastIndexOf('<<', dictEnd) : -1;
+      var isFlate = false, lengthVal = -1, lengthPos = -1, lengthLen = 0;
+      if(dictStart >= 0){
+        var dict = pdfStr.slice(dictStart, dictEnd+2);
+        isFlate = dict.indexOf('/FlateDecode') >= 0 || /\/Filter\s*\[.*?\/Fl/.test(dict);
+        var lm = dict.match(/\/Length\s+(\d+)/);
+        if(lm){
+          lengthVal = parseInt(lm[1]);
+          lengthPos = pdfStr.indexOf(lm[0], dictStart);
+          lengthLen = lm[0].length;
+        }
+      }
+      segments.push({ dataStart:dataStart, dataEnd:ei, isFlate:isFlate, lengthPos:lengthPos, lengthVal:lengthVal, lengthLen:lengthLen });
+      pos = ei + 10;
+    }
+
+    if(segments.length === 0) return { bytes: bytes, method: 'none', error: 'No content streams found in PDF.' };
+
+    // Process each FlateDecode segment
+    var pdfArr = new Uint8Array(bytes);
+    // We'll rebuild by collecting modified segments
+    var parts = []; // {start, end, replacement (Uint8Array or null for passthrough)}
+    var prevEnd = 0;
+
+    for(var si2=0; si2<segments.length; si2++){
+      var seg = segments[si2];
+      if(!seg.isFlate){ continue; }
+      var streamData = pdfArr.slice(seg.dataStart, seg.dataEnd);
+      var decompressed = await decompressRaw(streamData);
+      if(!decompressed) continue;
+      var decStr = toStr(decompressed);
+      var r2 = doReplace(decStr);
+      if(!r2.modified) continue;
+      // Recompress
+      var modBytes = toBytes(r2.str);
+      var recompressed = await compressRaw(modBytes);
+      if(!recompressed) continue;
+      anyMod = true;
+      // Record this replacement: replace stream data bytes
+      parts.push({ dataStart: seg.dataStart, dataEnd: seg.dataEnd, newData: recompressed, lengthPos: seg.lengthPos, lengthLen: seg.lengthLen });
+    }
+
+    if(!anyMod) return { bytes: bytes, method: 'none', error: 'Placeholders not found in PDF content streams. Make sure your template PDF was created from Word/LibreOffice with plain (unformatted) {{placeholder}} text.' };
+
+    // Rebuild PDF with replacements
+    // Work backwards to keep offsets valid
+    parts.sort(function(a,b){ return b.dataStart - a.dataStart; });
+    var pdfList = Array.from(pdfArr);
+
+    parts.forEach(function(p){
+      // Replace stream data
+      var newDataArr = Array.from(p.newData);
+      pdfList.splice(p.dataStart, p.dataEnd - p.dataStart, ...newDataArr);
+      // Update /Length — find it in the already-modified list
+      // Since we work backwards, earlier positions are still valid
+      if(p.lengthPos >= 0){
+        var newLenStr = '/Length ' + p.newData.length;
+        var oldLenStr = pdfList.slice(p.lengthPos, p.lengthPos + p.lengthLen).map(function(b){ return String.fromCharCode(b); }).join('');
+        // Replace length string (pad with spaces if shorter to avoid offset issues)
+        var newLenPadded = newLenStr.padEnd(p.lengthLen);
+        for(var i=0;i<p.lengthLen && i<newLenPadded.length;i++){
+          pdfList[p.lengthPos+i] = newLenPadded.charCodeAt(i) & 0xff;
+        }
       }
     });
 
-    var result = new Uint8Array(text.length);
-    for(var j=0;j<text.length;j++) result[j] = text.charCodeAt(j) & 0xff;
-    return result;
+    return { bytes: new Uint8Array(pdfList), method: 'flate' };
   }
 
-  // Build filename from naming pattern
-  function buildFilename(pattern, rowData, rowIndex){
-    if(!pattern || !pattern.trim()){
-      return 'Row_' + (rowIndex+1) + '.pdf';
-    }
-    var name = pattern.trim();
-    // Replace {{Field}} with row values
-    name = name.replace(/\{\{([^}]+)\}\}/g, function(_,f){
-      var v = rowData[f] !== undefined ? rowData[f] : rowData[f.trim()];
-      return v !== undefined ? String(v).replace(/[\\/:*?"<>|]/g,'_') : '';
+  /* ── File naming ── */
+  function buildFilename(pattern, row, idx){
+    if(!pattern || !pattern.trim()) return 'Row_'+(idx+1)+'.pdf';
+    var name = pattern.trim().replace(/\{\{([^}]+)\}\}/g, function(_,f){
+      var v = row[f] !== undefined ? row[f] : row['{{'+f+'}}'];
+      return v !== undefined ? String(v).replace(/[\/:*?"<>|]/g,'_') : '';
     });
-    // Sanitize
-    name = name.replace(/[\\/:*?"<>|]/g,'_').replace(/\s+/g,' ').trim();
-    if(!name) name = 'Row_'+(rowIndex+1);
+    name = name.replace(/[\/:*?"<>|]/g,'_').replace(/\s+/g,' ').trim() || 'Row_'+(idx+1);
     return name + '.pdf';
   }
 
-  // Update naming preview
-  function updateNamingPreview(){
-    if(!excelData.length) return;
-    var preview = buildFilename(namingPattern.value, excelData[0], 0);
-    namingPreview.textContent = 'Preview: ' + preview;
-  }
-
-  // Show/hide mapping + generate cards
+  /* ── Show/hide cards ── */
   function checkShowCards(){
-    if(pdfBytes && pdfBytes.length && excelData.length && excelHeaders.length){
+    if(pdfBytes && excelData.length && excelHeaders.length){
       buildMappingTable();
-      mappingCard.style.display = 'block';
-      generateCard.style.display = 'block';
-      generateSummary.textContent = excelData.length + ' row' + (excelData.length>1?'s':'') + ' × ' + pdfPlaceholders.length + ' placeholder' + (pdfPlaceholders.length!==1?'s':'');
+      mappingCard.style.display='block';
+      generateCard.style.display='block';
+      genSummary.textContent = excelData.length+' row'+(excelData.length>1?'s':'')+' × '+pdfPlaceholders.length+' placeholder'+(pdfPlaceholders.length!==1?'s':'');
       updateNamingPreview();
     } else {
-      mappingCard.style.display = 'none';
-      generateCard.style.display = 'none';
+      mappingCard.style.display='none';
+      generateCard.style.display='none';
     }
-    resultsCard.style.display = 'none';
+    resultsCard.style.display='none';
   }
 
-  // Build field mapping table
+  /* ── Auto-match: strip {{}} from header for comparison ── */
+  function stripBraces(s){ return s.replace(/^\{\{|\}\}$/g,'').trim(); }
+
+  /* ── Mapping table ── */
   function buildMappingTable(){
-    mappingBody.innerHTML = '';
+    mappingBody.innerHTML='';
     pdfPlaceholders.forEach(function(ph){
-      var tr = document.createElement('tr');
-      // Find best auto-match column
-      var autoMatch = excelHeaders.find(function(h){ return h.toLowerCase()===ph.toLowerCase(); }) || '';
+      var autoMatch = excelHeaders.find(function(h){
+        return h.toLowerCase()===ph.toLowerCase() ||
+               stripBraces(h).toLowerCase()===ph.toLowerCase();
+      }) || '';
       var opts = '<option value="">— skip —</option>';
       excelHeaders.forEach(function(h){
         opts += '<option value="'+h+'"'+(h===autoMatch?' selected':'')+'>'+h+'</option>';
       });
-      tr.innerHTML = '<td><span class="placeholder-chip">{{'+ph+'}}</span></td>'+
-                     '<td><select class="map-select" data-ph="'+ph+'">'+opts+'</select></td>';
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td><span class="ph-chip">{{'+ph+'}}</span></td><td><select class="map-sel" data-ph="'+ph+'">'+opts+'</select></td>';
       mappingBody.appendChild(tr);
     });
   }
 
-  // Get current mapping {ph: columnName}
   function getMapping(){
-    var map = {};
-    document.querySelectorAll('.map-select').forEach(function(sel){
-      if(sel.value) map[sel.dataset.ph] = sel.value;
-    });
-    return map;
+    var m={};
+    document.querySelectorAll('.map-sel').forEach(function(s){ if(s.value) m[s.dataset.ph]=s.value; });
+    return m;
   }
 
-  // ── PDF Drop ──
+  function updateNamingPreview(){
+    if(!excelData.length) return;
+    var preview = buildFilename(namingPat.value, excelData[0], 0);
+    namingPreview.textContent = 'Preview (row 1): '+preview;
+  }
+
+  /* ── PDF drop ── */
   pdfDrop.addEventListener('click', function(){ pdfInput.click(); });
   pdfDrop.addEventListener('dragover', function(e){ e.preventDefault(); pdfDrop.classList.add('drag-over'); });
   pdfDrop.addEventListener('dragleave', function(){ pdfDrop.classList.remove('drag-over'); });
   pdfDrop.addEventListener('drop', function(e){ e.preventDefault(); pdfDrop.classList.remove('drag-over'); if(e.dataTransfer.files[0]) handlePdf(e.dataTransfer.files[0]); });
-  pdfInput.addEventListener('change', function(){ if(pdfInput.files[0]) handlePdf(pdfInput.files[0]); pdfInput.value=''; });
+  pdfInput.addEventListener('change', function(){ if(this.files[0]) handlePdf(this.files[0]); this.value=''; });
 
   function handlePdf(file){
-    pdfError.textContent = '';
-    if(!file.name.toLowerCase().endsWith('.pdf')){ pdfError.textContent='Please upload a PDF file.'; return; }
-    var reader = new FileReader();
-    reader.onload = function(e){
-      pdfBytes = new Uint8Array(e.target.result);
-      pdfPlaceholders = extractPlaceholders(pdfBytes);
-      makePill(pdfPill, file.name, file.size, function(){
-        pdfBytes=null; pdfPlaceholders=[]; pdfPill.style.display='none';
-        pdfPhs.style.display='none'; pdfError.textContent=''; checkShowCards();
-      });
+    pdfError.textContent='';
+    if(!file.name.toLowerCase().endsWith('.pdf')){ pdfError.textContent='Please upload a .pdf file.'; return; }
+    var r=new FileReader();
+    r.onload=function(ev){
+      pdfBytes=new Uint8Array(ev.target.result);
+      pdfPlaceholders=extractPlaceholders(pdfBytes);
+      makePill(pdfPill, file.name, file.size, function(){ pdfBytes=null; pdfPlaceholders=[]; pdfPill.style.display='none'; pdfPhRow.style.display='none'; pdfError.textContent=''; checkShowCards(); });
+      pdfPhRow.style.display='block';
       if(pdfPlaceholders.length){
-        pdfPhs.style.display='block';
-        phChips.innerHTML = pdfPlaceholders.map(function(p){ return '<span class="placeholder-chip">{{'+p+'}}</span>'; }).join('');
+        pdfPhChips.innerHTML=pdfPlaceholders.map(function(p){ return '<span class="ph-chip" style="margin:2px;">{{'+p+'}}</span>'; }).join(' ');
       } else {
-        pdfPhs.style.display='block';
-        phChips.innerHTML = '<span style="font-size:.8rem;color:#888;">No {{placeholders}} found. Make sure your PDF was created from an editable document (Word/LibreOffice) with {{FieldName}} text.</span>';
+        pdfPhChips.innerHTML='<span style="font-size:.8rem;color:#888;">No <code>{{placeholders}}</code> detected in this PDF. Make sure the PDF has plain-text {{Field}} markers (not colored/formatted).</span>';
       }
       checkShowCards();
     };
-    reader.readAsArrayBuffer(file);
+    r.readAsArrayBuffer(file);
   }
 
-  // ── Excel Drop ──
+  /* ── Excel drop ── */
   excelDrop.addEventListener('click', function(){ excelInput.click(); });
   excelDrop.addEventListener('dragover', function(e){ e.preventDefault(); excelDrop.classList.add('drag-over'); });
   excelDrop.addEventListener('dragleave', function(){ excelDrop.classList.remove('drag-over'); });
   excelDrop.addEventListener('drop', function(e){ e.preventDefault(); excelDrop.classList.remove('drag-over'); if(e.dataTransfer.files[0]) handleExcel(e.dataTransfer.files[0]); });
-  excelInput.addEventListener('change', function(){ if(excelInput.files[0]) handleExcel(excelInput.files[0]); excelInput.value=''; });
+  excelInput.addEventListener('change', function(){ if(this.files[0]) handleExcel(this.files[0]); this.value=''; });
 
   function handleExcel(file){
-    excelError.textContent = '';
-    var name = file.name.toLowerCase();
-    if(!name.endsWith('.xlsx') && !name.endsWith('.xls') && !name.endsWith('.csv')){
-      excelError.textContent='Please upload an Excel (.xlsx/.xls) or CSV file.'; return;
-    }
-    var reader = new FileReader();
-    reader.onload = function(e){
+    excelError.textContent='';
+    var n=file.name.toLowerCase();
+    if(!n.endsWith('.xlsx')&&!n.endsWith('.xls')&&!n.endsWith('.csv')){ excelError.textContent='Please upload .xlsx, .xls, or .csv.'; return; }
+    var r=new FileReader();
+    r.onload=function(ev){
       try{
-        var wb = XLSX.read(e.target.result, {type:'array'});
-        var ws = wb.Sheets[wb.SheetNames[0]];
-        var json = XLSX.utils.sheet_to_json(ws, {defval:''});
-        if(!json.length){ excelError.textContent='No data rows found in the file.'; return; }
-        excelData = json;
-        excelHeaders = Object.keys(json[0]);
-        makePill(excelPill, file.name, file.size, function(){
-          excelData=[]; excelHeaders=[]; excelPill.style.display='none';
-          excelInfo.style.display='none'; excelError.textContent=''; checkShowCards();
-        });
+        var wb=XLSX.read(ev.target.result,{type:'array'});
+        var ws=wb.Sheets[wb.SheetNames[0]];
+        var json=XLSX.utils.sheet_to_json(ws,{defval:''});
+        if(!json.length){ excelError.textContent='No data rows found (need at least one header row + one data row).'; return; }
+        excelData=json;
+        excelHeaders=Object.keys(json[0]);
+        makePill(excelPill, file.name, file.size, function(){ excelData=[]; excelHeaders=[]; excelPill.style.display='none'; excelInfo.style.display='none'; excelError.textContent=''; checkShowCards(); });
+        excelInfo.textContent=json.length+' data row'+(json.length>1?'s':'')+' · Columns: '+excelHeaders.join(', ');
         excelInfo.style.display='block';
-        excelRowsT.textContent = json.length + ' data rows · Columns: ' + excelHeaders.join(', ');
         checkShowCards();
       }catch(err){ excelError.textContent='Failed to read file: '+err.message; }
     };
-    reader.readAsArrayBuffer(file);
+    r.readAsArrayBuffer(file);
   }
 
-  // Naming pattern preview
-  namingPattern.addEventListener('input', updateNamingPreview);
+  namingPat.addEventListener('input', updateNamingPreview);
 
-  // ── Generate ──
-  generateBtn.addEventListener('click', function(){
-    genError.textContent='';
-    var mapping = getMapping();
-    if(Object.keys(mapping).length === 0 && pdfPlaceholders.length > 0){
-      genError.textContent = 'Please map at least one field before generating.'; return;
-    }
-    if(!pdfBytes || !excelData.length){ genError.textContent='Missing template or data.'; return; }
+  /* ── Generate ── */
+  genBtn.addEventListener('click', function(){
+    genError.textContent=''; zipError.textContent='';
+    var mapping=getMapping();
+    if(!pdfBytes||!excelData.length){ genError.textContent='Upload both a PDF template and Excel data first.'; return; }
+    if(pdfPlaceholders.length && !Object.keys(mapping).length){ genError.textContent='Please map at least one field.'; return; }
 
-    generatedBlobs = [];
-    resultGrid.innerHTML = '';
-    resultsCard.style.display = 'none';
-    progressSec.style.display = 'block';
-    generateBtn.disabled = true;
-    generateBtn.textContent = 'Generating…';
+    generatedBlobs=[];
+    resultGrid.innerHTML='';
+    resultsCard.style.display='none';
+    progressSec.style.display='block';
+    genBtn.disabled=true; genBtn.textContent='Generating…';
+    var total=excelData.length, done=0, namePat=namingPat.value;
 
-    var total = excelData.length;
-    var done = 0;
-    var namePat = namingPattern.value;
-
-    function processNext(i){
-      if(i >= total){
-        // Done
-        progressFill.style.width = '100%';
-        progressText.textContent = total + ' / ' + total;
-        generateBtn.disabled = false;
-        generateBtn.textContent = '⚡ Generate All PDFs';
-        progressSec.style.display = 'none';
+    function processRow(i){
+      if(i>=total){
+        genBtn.disabled=false; genBtn.textContent='⚡ Generate All PDFs';
+        progressSec.style.display='none';
         showResults();
         return;
       }
-      var row = excelData[i];
-      var rowMapping = {};
+      var row=excelData[i];
+      // Build the field→value mapping for this row
+      var rowMap={};
       Object.keys(mapping).forEach(function(ph){
-        rowMapping[ph] = row[mapping[ph]] !== undefined ? row[mapping[ph]] : '';
+        var colName=mapping[ph];
+        // Look up by exact column name (which may include {{}} braces)
+        var val = row[colName] !== undefined ? row[colName] : '';
+        rowMap[ph] = val;
       });
-      try{
-        var modBytes = replacePlaceholders(pdfBytes, rowMapping);
-        var blob = new Blob([modBytes], {type:'application/pdf'});
-        var fname = buildFilename(namePat, row, i);
-        generatedBlobs.push({name:fname, blob:blob});
-      }catch(err){
-        genError.textContent = 'Error on row '+(i+1)+': '+err.message;
-      }
-      done++;
-      progressFill.style.width = Math.round((done/total)*100)+'%';
-      progressText.textContent = done + ' / ' + total;
-      // Use setTimeout to keep UI responsive
-      setTimeout(function(){ processNext(i+1); }, 0);
+      replacePlaceholdersAsync(pdfBytes, rowMap).then(function(res){
+        if(res.bytes){
+          var fname=buildFilename(namePat,row,i);
+          generatedBlobs.push({name:fname, blob:new Blob([res.bytes],{type:'application/pdf'})});
+          if(res.error && i===0){
+            genError.textContent='Note: '+res.error;
+          }
+        }
+        done++;
+        progressFill.style.width=Math.round(done/total*100)+'%';
+        progressText.textContent=done+' / '+total;
+        setTimeout(function(){ processRow(i+1); }, 0);
+      });
     }
-
-    processNext(0);
+    processRow(0);
   });
 
   function showResults(){
-    resultsCard.style.display = 'block';
-    resultGrid.innerHTML = '';
+    resultsCard.style.display='block';
+    resultsCount.textContent=generatedBlobs.length+' PDF'+(generatedBlobs.length!==1?'s':'')+' generated';
+    resultGrid.innerHTML='';
     generatedBlobs.forEach(function(item){
-      var url = URL.createObjectURL(item.blob);
-      var card = document.createElement('div');
-      card.className = 'result-card';
-      card.innerHTML = '<div class="rc-icon">📄</div>'+
-        '<div class="rc-name">'+item.name+'</div>'+
-        '<a class="btn-dl" href="'+url+'" download="'+item.name+'">⬇ Download</a>';
+      var url=URL.createObjectURL(item.blob);
+      var card=document.createElement('div'); card.className='result-card';
+      card.innerHTML='<div class="rc-icon">📄</div><div class="rc-name">'+item.name+'</div><a class="rc-dl" href="'+url+'" download="'+item.name+'">⬇ Download</a>';
       resultGrid.appendChild(card);
     });
-    resultsCard.scrollIntoView({behavior:'smooth', block:'start'});
+    resultsCard.scrollIntoView({behavior:'smooth',block:'start'});
   }
 
-  // ── ZIP Download ──
+  /* ── ZIP ── */
   zipBtn.addEventListener('click', function(){
     if(!generatedBlobs.length) return;
-    zipBtn.textContent = 'Preparing ZIP…';
-    zipBtn.disabled = true;
-    var zip = new JSZip();
-    var promises = generatedBlobs.map(function(item){
+    zipError.textContent='';
+    zipBtn.textContent='Preparing ZIP…'; zipBtn.disabled=true;
+    var zip=new JSZip();
+    var proms=generatedBlobs.map(function(item){
       return item.blob.arrayBuffer().then(function(buf){ zip.file(item.name, buf); });
     });
-    Promise.all(promises).then(function(){
-      return zip.generateAsync({type:'blob', compression:'DEFLATE', compressionOptions:{level:6}});
-    }).then(function(zipBlob){
-      var url = URL.createObjectURL(zipBlob);
-      var a = document.createElement('a');
-      a.href = url;
-      a.download = 'QuikConvert_BulkPDF.zip';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(function(){ URL.revokeObjectURL(url); }, 5000);
-      zipBtn.textContent = '⬇ Download All as ZIP';
-      zipBtn.disabled = false;
-    }).catch(function(err){
-      genError.textContent = 'ZIP error: '+err.message;
-      zipBtn.textContent = '⬇ Download All as ZIP';
-      zipBtn.disabled = false;
-    });
+    Promise.all(proms).then(function(){ return zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}}); })
+    .then(function(zb){
+      var a=document.createElement('a'); a.href=URL.createObjectURL(zb); a.download='BulkPDF_QuikConvert.zip';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      zipBtn.textContent='⬇ Download All as ZIP'; zipBtn.disabled=false;
+    }).catch(function(e){ zipError.textContent='ZIP error: '+e.message; zipBtn.textContent='⬇ Download All as ZIP'; zipBtn.disabled=false; });
   });
 
 })();
