@@ -29,6 +29,7 @@
       <li><a href="emi.html"        class="nav-link">EMI</a></li>
       <li><a href="resize.html"     class="nav-link">Resize</a></li>
       <li><a href="document.html"   class="nav-link">Docs</a></li>
+    <li><a href="bulkpdf.html" class="nav-link">Bulk PDF</a></li>
     </ul>
     <button class="hamburger" id="hamburger">☰</button>
   </div>
@@ -51,8 +52,27 @@
   <p class="page-sub">Find your exact age in years, months, and days</p>
 
   <div class="card">
-    <label for="age-dob">Date of Birth</label>
-    <input type="date" id="age-dob" style="margin-bottom:20px;" />
+    <label>Date of Birth</label>
+    <div style="display:flex;gap:10px;margin-bottom:20px;">
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+        <span style="font-size:.72rem;color:#888;">Day</span>
+        <input type="number" id="age-dd" min="1" max="31" placeholder="DD"
+               style="text-align:center;padding:12px 8px;font-size:1.1rem;font-weight:600;background:#1a1a1a;border:1px solid rgba(255,215,0,.3);border-radius:8px;color:#fff;width:100%;box-sizing:border-box;"
+               inputmode="numeric" maxlength="2">
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+        <span style="font-size:.72rem;color:#888;">Month</span>
+        <input type="number" id="age-mm" min="1" max="12" placeholder="MM"
+               style="text-align:center;padding:12px 8px;font-size:1.1rem;font-weight:600;background:#1a1a1a;border:1px solid rgba(255,215,0,.3);border-radius:8px;color:#fff;width:100%;box-sizing:border-box;"
+               inputmode="numeric" maxlength="2">
+      </div>
+      <div style="flex:2;display:flex;flex-direction:column;gap:4px;">
+        <span style="font-size:.72rem;color:#888;">Year</span>
+        <input type="number" id="age-yy" min="1900" max="2099" placeholder="YYYY"
+               style="text-align:center;padding:12px 8px;font-size:1.1rem;font-weight:600;background:#1a1a1a;border:1px solid rgba(255,215,0,.3);border-radius:8px;color:#fff;width:100%;box-sizing:border-box;"
+               inputmode="numeric" maxlength="4">
+      </div>
+    </div>
     <p class="error" id="age-error"></p>
     <button class="btn btn-gold" id="age-calc-btn">Calculate Age</button>
 
