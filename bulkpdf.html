@@ -84,8 +84,8 @@
         <div class="dz-icon">📄</div>
         <div class="dz-title">Drop PDF template here</div>
         <div class="dz-sub">or click to browse · .pdf files only</div>
-        <input type="file" id="pdf-input" accept=".pdf" style="display:none;">
       </div>
+      <input type="file" id="pdf-input" accept=".pdf" style="display:none;">
       <div id="pdf-pill" style="display:none;"></div>
       <div id="pdf-ph-row" style="margin-top:10px;display:none;">
         <span style="font-size:.77rem;color:#777;">Detected placeholders: </span>
@@ -105,8 +105,8 @@
         <div class="dz-icon">📊</div>
         <div class="dz-title">Drop Excel or CSV here</div>
         <div class="dz-sub">or click to browse · .xlsx, .xls, .csv</div>
-        <input type="file" id="excel-input" accept=".xlsx,.xls,.csv" style="display:none;">
       </div>
+      <input type="file" id="excel-input" accept=".xlsx,.xls,.csv" style="display:none;">
       <div id="excel-pill" style="display:none;"></div>
       <p id="excel-info" style="font-size:.82rem;color:#888;margin-top:8px;display:none;"></p>
       <p id="excel-error" class="error" style="margin-top:8px;"></p>
@@ -428,7 +428,7 @@ endstream', dataStart);
   }
 
   /* ── PDF drop ── */
-  pdfDrop.addEventListener('click', function(e){ if(e.target!==pdfInput) pdfInput.click(); });
+  pdfDrop.addEventListener('click', function(){ pdfInput.click(); });
   pdfDrop.addEventListener('dragover', function(e){ e.preventDefault(); pdfDrop.classList.add('drag-over'); });
   pdfDrop.addEventListener('dragleave', function(){ pdfDrop.classList.remove('drag-over'); });
   pdfDrop.addEventListener('drop', function(e){ e.preventDefault(); pdfDrop.classList.remove('drag-over'); if(e.dataTransfer.files[0]) handlePdf(e.dataTransfer.files[0]); });
@@ -454,7 +454,7 @@ endstream', dataStart);
   }
 
   /* ── Excel drop ── */
-  excelDrop.addEventListener('click', function(e){ if(e.target!==excelInput) excelInput.click(); });
+  excelDrop.addEventListener('click', function(){ excelInput.click(); });
   excelDrop.addEventListener('dragover', function(e){ e.preventDefault(); excelDrop.classList.add('drag-over'); });
   excelDrop.addEventListener('dragleave', function(){ excelDrop.classList.remove('drag-over'); });
   excelDrop.addEventListener('drop', function(e){ e.preventDefault(); excelDrop.classList.remove('drag-over'); if(e.dataTransfer.files[0]) handleExcel(e.dataTransfer.files[0]); });
